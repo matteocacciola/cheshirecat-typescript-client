@@ -16,7 +16,7 @@ To install CheshireCat Node.js SDK you can add the following line to your packag
 {
   "dependencies": {
     "cheshirecat-nodejs-sdk": "github:matteocacciola/cheshirecat-nodejs-sdk"
-    }
+  }
 }
 ```
 
