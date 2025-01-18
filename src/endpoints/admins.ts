@@ -86,6 +86,12 @@ export class AdminsEndpoint extends AbstractEndpoint {
             this.systemId
         );
     }
+
+    async getAgents(): Promise<string[]> {
+        return this.get<string[]>(
+            this.formatUrl("/utils/agents/")
+        );
+    }
     
     async postAgentCreate(agentId?: string): Promise<ResetOutput> {
         return this.postJson<ResetOutput>(
