@@ -112,22 +112,13 @@ export class Why extends BaseDTO {
     @SerializedName("model_interactions")
     public modelInteractions: Record<string, any>[] = [];
 
-    @SerializedName("agent_output")
-    public agentOutput?: AgentOutput = null;
-
     public toArray(): Record<string, any> {
-        const result: Record<string, any> = {
+        return {
             input: this.input,
             intermediate_steps: this.intermediateSteps,
             memory: this.memory.toArray(),
             model_interactions: this.modelInteractions,
         };
-
-        if (this.agentOutput) {
-            result.agent_output = this.agentOutput.toArray();
-        }
-
-        return result;
     }
 }
 
