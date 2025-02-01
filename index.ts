@@ -7,3 +7,5 @@ export {WSClient} from "./src/clients/wsclient";
 
 export * from "./src/builders";
 export * from "./src/models/dtos"
+export * from "./src/enums";
+export * from "./src/helpers";
