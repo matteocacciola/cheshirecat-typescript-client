@@ -1,26 +1,28 @@
 {
   "name": "cheshirecat-nodejs-sdk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "lint": "eslint . --ext .ts --fix --ignore-path .gitignore",
+    "lint": "eslint ./src --fix",
     "release": "npm run build && changeset publish",
     "start": "ts-node index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "Matteo Cacciola <matteo.cacciola@gmail.com>",
-  "license": "ISC",
+  "license": "GPL-3.0-only",
   "description": "",
   "devDependencies": {
     "@eslint/js": "^9.18.0",
     "@types/websocket": "^1.0.10",
     "@types/ws": "^8.5.13",
-    "eslint": "^9.18.0",
+    "@typescript-eslint/eslint-plugin": "^8.22.0",
+    "@typescript-eslint/parser": "^8.22.0",
+    "eslint": "^9.19.0",
     "globals": "^15.14.0",
     "typescript": "^5.7.3",
-    "typescript-eslint": "^8.20.0"
+    "typescript-eslint": "^8.22.0"
   },
   "dependencies": {
     "axios": "^1.7.9",

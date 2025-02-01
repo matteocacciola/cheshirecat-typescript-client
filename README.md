@@ -10,14 +10,16 @@ of [Cheshire Cat](https://github.com/matteocacciola/cheshirecat-core) on a Node.
 
 ## Installation
 
-To install CheshireCat Node.js SDK you can add the following line to your package.json file:
+To install CheshireCat Node.js SDK, run:
 
-```json
-{
-  "dependencies": {
-    "cheshirecat-nodejs-sdk": "github:matteocacciola/cheshirecat-nodejs-sdk"
-  }
-}
+```bash
+npm install cheshirecat-nodejs-sdk
+```
+
+or, if you are using yarn:
+
+```bash
+yarn add cheshirecat-nodejs-sdk
 ```
 
 ## Usage
@@ -66,5 +68,5 @@ cheshireCatClient.memory().getMemoryCollections(); // get number of vectors in t
 cheshireCatClient.memory().getMemoryRecall("HELLO"); // recall memories by text
 
 //delete memory points by metadata, like this example delete by source
-cheshireCatClient.memory().deleteMemoryPointsByMetadata(Collection.Declarative, ["source" => $url]);
+cheshireCatClient.memory().deleteMemoryPointsByMetadata(Collection.Declarative, {"source": url});
 ```

@@ -1,5 +1,3 @@
-import * as fs from "node:fs";
-
 export function camelToSnakeCase(str: string): string {
     if (!str || typeof str !== "string") return "";
 
