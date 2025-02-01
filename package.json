@@ -3,11 +3,14 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint . --ext .ts",
+    "build": "tsc",
+    "lint": "eslint . --ext .ts --fix --ignore-path .gitignore",
+    "release": "npm run build && changeset publish",
+    "start": "ts-node index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Matteo Cacciola <matteo.cacciola@gmail.com>",
   "license": "ISC",
   "description": "",
   "devDependencies": {

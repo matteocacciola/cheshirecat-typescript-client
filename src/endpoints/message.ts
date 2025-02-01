@@ -4,6 +4,15 @@ import {Message} from "../models/dtos";
 import WebSocket from "ws";
 
 export class MessageEndpoint extends AbstractEndpoint {
+    /**
+     * This endpoint sends a message to the agent identified by the agentId parameter. The message is sent via HTTP.
+     *
+     * @param message The message to send
+     * @param agentId The ID of the agent to send the message to
+     * @param userId The ID of the user sending the message
+     *
+     * @returns The response from the server
+     */
     async sendHttpMessage(message: Message, agentId?: string, userId?: string): Promise<MessageOutput> {
         return this.postJson<MessageOutput>(
             "/message",
@@ -13,6 +22,16 @@ export class MessageEndpoint extends AbstractEndpoint {
         );
     }
 
+    /**
+     * This endpoint sends a message to the agent identified by the agentId parameter. The message is sent via WebSocket.
+     *
+     * @param message The message to send
+     * @param agentId The ID of the agent to send the message to
+     * @param userId The ID of the user sending the message
+     * @param closure A closure that is called when a non-chat message is received
+     *
+     * @returns The response from the server
+     */
     async sendWebsocketMessage(
         message: Message,
         agentId?: string,

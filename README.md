@@ -28,7 +28,7 @@ import { CheshireCatClient } from 'cheshirecat-nodejs-sdk';
 import { HttpClient } from 'cheshirecat-nodejs-sdk/clients/httpclient';
 import { WSClient } from 'cheshirecat-nodejs-sdk/clients/wsclient';
 
-cheshireCatClient = new CheshireCatClient(
+const cheshireCatClient = new CheshireCatClient(
     new WSClient('cheshire_cat_core', 1865, null),
     new HttpClient('cheshire_cat_core', 1865, null)
 );
@@ -38,12 +38,12 @@ Send a message to the websocket:
 ```javascript
 import { Message } from 'cheshirecat-nodejs-sdk/models/dtos';
 
-notificationClosure = (message: string) => {
+const notificationClosure = (message: string) => {
  // handle websocket notification, like chat token stream
 }
 
 // result is the result of the message
-result = cheshireCatClient.message().sendWebsocketMessage(
+const result = cheshireCatClient.message().sendWebsocketMessage(
     new Message("Hello world!", 'user', []),  // message body
     notificationClosure // websocket notification closure handle
 );
@@ -53,10 +53,10 @@ result = cheshireCatClient.message().sendWebsocketMessage(
 Load data to the rabbit hole:
 ```javascript
 //file
-result = await cheshireCatClient.rabbitHole().postFile(file, null, null);
+const result = await cheshireCatClient.rabbitHole().postFile(file, null, null);
 
 //url
-result = await cheshireCatClient.rabbitHole().postWeb(url, null,null);
+const result = await cheshireCatClient.rabbitHole().postWeb(url, null,null);
 ```
 
 Memory management utilities:

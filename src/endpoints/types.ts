@@ -1,18 +1,28 @@
 import {ReadStream} from "fs";
-import {AbstractEndpoint} from "./abstract";
+import {AdminsEndpoint} from "./admins";
+import {AuthHandlerEndpoint} from "./authHandler";
+import {EmbedderEndpoint} from "./embedder";
+import {LargeLanguageModelEndpoint} from "./largeLanguageModel";
+import {MemoryEndpoint} from "./memory";
+import {MessageEndpoint} from "./message";
+import {PluginsEndpoint} from "./plugins";
+import {FileManagerEndpoint} from "./fileManager";
+import {RabbitHoleEndpoint} from "./rabbitHole";
+import {SettingsEndpoint} from "./settings";
+import {UsersEndpoint} from "./users";
 
 export interface Endpoints {
-    admins: () => AbstractEndpoint;
-    authHandler: () => AbstractEndpoint;
-    embedder: () => AbstractEndpoint;
-    largeLanguageModel: () => AbstractEndpoint;
-    memory: () => AbstractEndpoint;
-    message: () => AbstractEndpoint;
-    plugins: () => AbstractEndpoint;
-    pluginFileManager: () => AbstractEndpoint;
-    rabbitHole: () => AbstractEndpoint;
-    settings: () => AbstractEndpoint;
-    users: () => AbstractEndpoint;
+    admins: () => AdminsEndpoint;
+    authHandler: () => AuthHandlerEndpoint;
+    embedder: () => EmbedderEndpoint;
+    fileManager: () => FileManagerEndpoint;
+    largeLanguageModel: () => LargeLanguageModelEndpoint;
+    memory: () => MemoryEndpoint;
+    message: () => MessageEndpoint;
+    plugins: () => PluginsEndpoint;
+    rabbitHole: () => RabbitHoleEndpoint;
+    settings: () => SettingsEndpoint;
+    users: () => UsersEndpoint;
 }
 
 export type MultipartItem = {

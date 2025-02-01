@@ -64,6 +64,10 @@ export class CheshireCatClient implements Endpoints {
         return new EmbedderEndpoint(this);
     }
 
+    public fileManager(): FileManagerEndpoint {
+        return new FileManagerEndpoint(this);
+    }
+
     public largeLanguageModel(): LargeLanguageModelEndpoint {
         return new LargeLanguageModelEndpoint(this);
     }
@@ -78,10 +82,6 @@ export class CheshireCatClient implements Endpoints {
 
     public plugins(): PluginsEndpoint {
         return new PluginsEndpoint(this);
-    }
-
-    public pluginFileManager(): FileManagerEndpoint {
-        return new FileManagerEndpoint(this);
     }
 
     public rabbitHole(): RabbitHoleEndpoint {

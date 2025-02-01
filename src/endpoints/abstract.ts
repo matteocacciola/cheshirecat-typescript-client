@@ -13,7 +13,7 @@ export abstract class AbstractEndpoint {
     }
 
     protected formatUrl(endpoint: string): string {
-        return endpoint.startsWith("/") ? endpoint : `/${this.prefix}/${endpoint}`;
+        return `/${this.prefix}/${endpoint}`.replace(/\/+/g, "/");
     }
 
     protected getHttpClient(agentId?: string, userId?: string): AxiosInstance {
