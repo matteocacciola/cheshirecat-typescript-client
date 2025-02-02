@@ -1,8 +1,8 @@
-# CheshireCat Typescript SDK
+# CheshireCat Typescript Client
 
 ----
 
-**CheshireCat Typescript SDK** is a library to help the implementation
+**CheshireCat Typescript Client** is a library to help the implementation
 of [Cheshire Cat](https://github.com/matteocacciola/cheshirecat-core) on a Javascript / Typescript (e.g. Node.js, React.js, Vue.js) Project
 
 * [Installation](#installation)
@@ -10,7 +10,7 @@ of [Cheshire Cat](https://github.com/matteocacciola/cheshirecat-core) on a Javas
 
 ## Installation
 
-To install CheshireCat Typescript SDK, run:
+To install CheshireCat Typescript Client, run:
 
 ```bash
 npm install cheshirecat-typescript-client
