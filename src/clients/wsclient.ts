@@ -27,7 +27,7 @@ export class WSClient {
         return this;
     }
 
-    public getClient(agentId?: string, userId?: string): WebSocketClient {
+    public getClient(agentId?: string | null, userId?: string | null): WebSocketClient {
         if (!this.apikey && !this.token) {
             throw new Error("You must provide an apikey or a token");
         }
@@ -35,7 +35,7 @@ export class WSClient {
         return this.createWsClient(agentId, userId);
     }
 
-    public getWsUri(agentId?: string, userId?: string): Uri {
+    public getWsUri(agentId?: string | null, userId?: string | null): Uri {
         const query: Record<string, string> = {};
 
         if (this.token) {
@@ -56,7 +56,7 @@ export class WSClient {
             .withPort(this.port);
     }
 
-    protected createWsClient(agentId?: string, userId?: string): WebSocketClient {
+    protected createWsClient(agentId?: string | null, userId?: string | null): WebSocketClient {
         return new WebSocketClient(this.getWsUri(agentId, userId).toString());
     }
 }

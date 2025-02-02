@@ -104,8 +104,8 @@ export class MemoryEndpoint extends AbstractEndpoint {
     async postConversationHistory(
         who: string,
         text: string,
-        images?: string[],
-        audio?: string[],
+        images?: string[] | null,
+        audio?: string[] | null,
         why?: any,
         agentId?: string,
         userId?: string
@@ -113,16 +113,10 @@ export class MemoryEndpoint extends AbstractEndpoint {
         const payload = {
             who,
             text,
+            ...(images && {images}),
+            ...(audio && {audio}),
+            ...(why && {why}),
         };
-        if (images) {
-            payload["images"] = images;
-        }
-        if (audio) {
-            payload["audio"] = audio;
-        }
-        if (why) {
-            payload["why"] = why;
-        }
 
         return this.postJson<ConversationHistoryOutput>(this.formatUrl("/conversation_history"), payload, agentId, userId);
     }
@@ -153,13 +147,11 @@ export class MemoryEndpoint extends AbstractEndpoint {
         agentId?: string,
         userId?: string
     ): Promise<MemoryRecallOutput> {
-        const query = {text};
-        if (k) {
-            query["k"] = k;
-        }
-        if (metadata) {
-            query["metadata"] = JSON.stringify(metadata);
-        }
+        const query = {
+            text,
+            ...(k && {k}),
+            ...(metadata && {metadata: JSON.stringify(metadata)}),
+        };
 
         return this.get<MemoryRecallOutput>(this.formatUrl("/recall"), agentId, userId, query);
     }
@@ -246,7 +238,12 @@ export class MemoryEndpoint extends AbstractEndpoint {
         metadata?: any,
         agentId?: string
     ): Promise<MemoryPointsDeleteByMetadataOutput> {
-        return this.delete<MemoryPointsDeleteByMetadataOutput>(this.formatUrl("/collections/" + collection + "/points"), agentId, null, metadata);
+        return this.delete<MemoryPointsDeleteByMetadataOutput>(
+            this.formatUrl("/collections/" + collection + "/points"),
+            agentId,
+            null,
+            metadata
+        );
     }
 
     /**
@@ -267,13 +264,10 @@ export class MemoryEndpoint extends AbstractEndpoint {
         offset?: number,
         agentId?: string
     ): Promise<MemoryPointsOutput> {
-        const query = {};
-        if (limit) {
-            query["limit"] = limit;
-        }
-        if (offset) {
-            query["offset"] = offset;
-        }
+        const query = {
+            ...(limit && {limit}),
+            ...(offset && {offset}),
+        };
 
         return this.get<MemoryPointsOutput>(this.formatUrl("/collections/" + collection + "/points"), agentId, null, query);
     }

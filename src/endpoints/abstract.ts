@@ -16,11 +16,11 @@ export abstract class AbstractEndpoint {
         return `/${this.prefix}/${endpoint}`.replace(/\/+/g, "/");
     }
 
-    protected getHttpClient(agentId?: string, userId?: string): AxiosInstance {
+    protected getHttpClient(agentId?: string | null, userId?: string | null): AxiosInstance {
         return this.client.getHttpClient().getClient(agentId, userId);
     }
 
-    protected getWsClient(agentId?: string, userId?: string): WebSocketClient {
+    protected getWsClient(agentId?: string | null, userId?: string | null): WebSocketClient {
         return this.client.getWsClient().getClient(agentId, userId);
     }
 
@@ -28,7 +28,7 @@ export abstract class AbstractEndpoint {
         return this.client.getSerializer().deserialize(data);
     }
 
-    protected async get<T>(endpoint: string, agentId?: string, userId?: string, query?: any): Promise<T> {
+    protected async get<T>(endpoint: string, agentId?: string | null, userId?: string | null, query?: any): Promise<T> {
         const options: any = {};
         if (query) {
             options.query = query;
@@ -38,7 +38,12 @@ export abstract class AbstractEndpoint {
         return this.deserialize<T>(response.data);
     }
 
-    protected async postJson<T>(endpoint: string, payload?: any, agentId?: string, userId?: string): Promise<T> {
+    protected async postJson<T>(
+        endpoint: string,
+        payload?: any,
+        agentId?: string | null,
+        userId?: string | null
+    ): Promise<T> {
         const options: any = {};
         if (payload) {
             options.json = payload;
@@ -48,7 +53,12 @@ export abstract class AbstractEndpoint {
         return this.deserialize<T>(response.data);
     }
 
-    protected async postMultipart<T>(endpoint: string, payload?: MultipartItem[], agentId?: string, userId?: string): Promise<T> {
+    protected async postMultipart<T>(
+        endpoint: string,
+        payload?: MultipartItem[],
+        agentId?: string | null,
+        userId?: string | null
+    ): Promise<T> {
         const options: any = {};
         if (payload) {
             options.multipart = payload;
@@ -58,12 +68,17 @@ export abstract class AbstractEndpoint {
         return this.deserialize<T>(response.data);
     }
 
-    protected async put<T>(endpoint: string, payload: any, agentId?: string, userId?: string): Promise<T> {
+    protected async put<T>(endpoint: string, payload: any, agentId?: string | null, userId?: string | null): Promise<T> {
         const response = await this.getHttpClient(agentId, userId).put(endpoint, {json: payload});
         return this.deserialize<T>(response.data);
     }
 
-    protected async delete<T>(endpoint: string, agentId?: string, userId?: string, payload?: any): Promise<T> {
+    protected async delete<T>(
+        endpoint: string,
+        agentId?: string | null,
+        userId?: string | null,
+        payload?: any
+    ): Promise<T> {
         const options: any = {};
         if (payload) {
             options.json = payload;

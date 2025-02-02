@@ -6,7 +6,7 @@ export class HttpClient {
     protected httpUri: Uri;
     protected apikey?: string;
     protected token?: string;
-    protected userId?: string;
+    protected userId?: string | null = null;
     protected agentId?: string;
     protected middlewares: Record<string, (config: InternalAxiosRequestConfig) => InternalAxiosRequestConfig>;
 
@@ -52,7 +52,7 @@ export class HttpClient {
         return this;
     }
 
-    public getClient(agentId?: string, userId?: string): AxiosInstance {
+    public getClient(agentId?: string | null, userId?: string | null): AxiosInstance {
         if (!this.apikey && !this.token) {
             throw new Error("You must provide an apikey or a token");
         }
