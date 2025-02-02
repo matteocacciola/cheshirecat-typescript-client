@@ -52,7 +52,7 @@ export class MemoryEndpoint extends AbstractEndpoint {
      * @returns The output of the deletion operation.
      */
     async deleteAllSingleMemoryCollectionPoints(collection: Collection, agentId?: string): Promise<CollectionPointsDestroyOutput> {
-        return this.delete<CollectionPointsDestroyOutput>(this.formatUrl("/collections/" + collection), agentId);
+        return this.delete<CollectionPointsDestroyOutput>(this.formatUrl("/collections/" + collection.toString()), agentId);
     }
 
     // END Memory Collections API --
