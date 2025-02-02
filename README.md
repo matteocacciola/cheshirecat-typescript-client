@@ -13,22 +13,20 @@ of [Cheshire Cat](https://github.com/matteocacciola/cheshirecat-core) on a Javas
 To install CheshireCat Typescript SDK, run:
 
 ```bash
-npm install cheshirecat-typescript-sdk
+npm install cheshirecat-typescript-client
 ```
 
 or, if you are using yarn:
 
 ```bash
-yarn add cheshirecat-typescript-sdk
+yarn add cheshirecat-typescript-client
 ```
 
 ## Usage
 Initialization and usage:
 
 ```javascript
-import { CheshireCatClient } from 'cheshirecat-typescript-sdk';
-import { HttpClient } from 'cheshirecat-typescript-sdk/httpclient';
-import { WSClient } from 'cheshirecat-typescript-sdk/wsclient';
+import { CheshireCatClient, HttpClient, WSClient } from 'cheshirecat-typescript-client';
 
 const cheshireCatClient = new CheshireCatClient(
     new WSClient('cheshire_cat_core', 1865, null),
@@ -38,7 +36,7 @@ const cheshireCatClient = new CheshireCatClient(
 Send a message to the websocket:
 
 ```javascript
-import { Message } from 'cheshirecat-typescript-sdk/dtos';
+import { Message } from 'cheshirecat-typescript-client';
 
 const notificationClosure = (message: string) => {
  // handle websocket notification, like chat token stream
