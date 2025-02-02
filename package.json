@@ -1,13 +1,15 @@
 {
-  "name": "cheshirecat-nodejs-sdk",
-  "version": "1.0.2",
-  "main": "index.js",
+  "name": "cheshirecat-typescript-sdk",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
   "scripts": {
     "build": "tsc",
     "lint": "eslint ./src --fix",
+    "prepare": "npm run build",
     "release": "npm run build && changeset publish",
-    "start": "ts-node index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "ts-node src/index.ts"
   },
   "keywords": [],
   "author": "Matteo Cacciola <matteo.cacciola@gmail.com>",
@@ -28,7 +30,7 @@
     "axios": "^1.7.9",
     "events": "^3.3.0",
     "fs": "^0.0.1-security",
-    "websocket": "^1.0.35",
+    "isomorphic-ws": "^5.0.0",
     "ws": "^8.18.0"
   }
 }

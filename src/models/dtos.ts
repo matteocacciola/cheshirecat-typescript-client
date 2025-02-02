@@ -2,7 +2,7 @@ import {BaseDTO} from "./base";
 import {SerializedName} from "../decorators";
 
 export class AgentOutput extends BaseDTO {
-    public output?: string = null;
+    public output?: string | null = null;
 
     @SerializedName("intermediate_steps")
     public intermediateSteps: Record<string, any>[] = [];
@@ -43,8 +43,8 @@ export class MemoryPoint extends BaseDTO {
 
 export class MessageBase extends BaseDTO {
     public text: string;
-    public images?: string[] = [];
-    public audio?: string[] = [];
+    public images?: string[] | null = [];
+    public audio?: string[] | null = [];
 
     public toArray(): Record<string, any> {
         const result: Record<string, any> = {

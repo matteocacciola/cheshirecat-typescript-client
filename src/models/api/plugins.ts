@@ -1,9 +1,9 @@
 import {PluginSettingsOutput} from "./nested/plugins";
 
 export class FilterOutput {
-    query?: string = null;
+    query?: string | null = null;
 
-    public toArray(): { query: string | null } {
+    public toArray(): object {
         return {
             query: this.query,
         };
@@ -14,7 +14,7 @@ export class HookOutput {
     name: string;
     priority: number;
 
-    public toArray(): { name: string, priority: number } {
+    public toArray(): object {
         return {
             name: this.name,
             priority: this.priority,
@@ -27,7 +27,7 @@ export class PluginCollectionOutput {
     installed: PluginItemOutput[] = [];
     registry: PluginItemRegistryOutput[] = [];
 
-    public toArray(): { filters: { query: string | null }, installed: any[], registry: any[] } {
+    public toArray(): object {
         return {
             filters: this.filters.toArray(),
             installed: this.installed.map(item => item.toArray()),
@@ -50,7 +50,7 @@ export class PluginItemOutput {
     hooks: HookOutput[];
     tools: ToolOutput[];
 
-    public toArray(): { id: string, name: string, description: string, author_name: string, author_url: string, plugin_url: string, tags: string, thumb: string, version: string, active: boolean, hooks: any[], tools: any[] } {
+    public toArray(): object {
         return {
             id: this.id,
             name: this.name,
@@ -80,7 +80,7 @@ export class PluginItemRegistryOutput {
     version: string;
     url: string;
 
-    public toArray(): { id: string, name: string, description: string, author_name: string, author_url: string, plugin_url: string, tags: string, thumb: string, version: string, url: string } {
+    public toArray(): object {
         return {
             id: this.id,
             name: this.name,
@@ -107,7 +107,7 @@ export interface PluginToggleOutput {
 export class ToolOutput {
     name: string;
 
-    public toArray(): { name: string } {
+    public toArray(): object {
         return {
             name: this.name,
         };

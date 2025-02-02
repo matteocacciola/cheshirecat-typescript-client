@@ -20,20 +20,20 @@ export class ConversationHistoryItem {
 }
 
 export class ConversationHistoryItemContent extends MessageBase {
-    text: string;
-    images: string[] | null;
-    audio: string[] | null;
-    why: Why | null;
+    why?: Why | null = null;
 
     public toArray(): object {
-        const data = {
-            "text": this.text,
-            "images": this.images,
-            "audio": this.audio,
+        let data: object = {
+            text: this.text,
+            images: this.images,
+            audio: this.audio,
         };
 
         if (this.why !== null) {
-            data["why"] = this.why.toArray();
+            data = {
+                ...data,
+                why: this.why?.toArray()
+            };
         }
 
         return data;

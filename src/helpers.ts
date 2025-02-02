@@ -1,5 +1,5 @@
 export function camelToSnakeCase(str: string): string {
-    if (!str || typeof str !== "string") return "";
+    if (!str) return "";
 
     const withUnderscores = str.replace(/([a-z])([A-Z])/g, "$1_$2");
 
@@ -9,7 +9,7 @@ export function camelToSnakeCase(str: string): string {
 }
 
 export function snakeToCamelCase(str: string): string {
-    if (!str || typeof str !== "string") return "";
+    if (!str) return "";
 
     return str.toLowerCase()
         .replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());

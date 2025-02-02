@@ -1,18 +1,18 @@
-import WebSocket from "ws";
+import WebSocket from "isomorphic-ws";
 import {Uri} from "./uri";
 import {EventEmitter} from "events";
 
 export class WSClient {
     protected host: string;
-    protected port?: number;
-    protected apikey?: string;
-    protected token?: string;
+    protected port?: number | null = null;
+    protected apikey?: string | null = null;
+    protected token?: string | null = null;
     protected isWSS: boolean;
 
     constructor(
         host: string,
-        port?: number,
-        apikey?: string,
+        port?: number | null,
+        apikey?: string | null,
         isWSS: boolean = false
     ) {
         this.host = host;
@@ -41,7 +41,7 @@ export class WSClient {
         if (this.token) {
             query["token"] = this.token;
         } else {
-            query["apikey"] = this.apikey;
+            query["apikey"] = this.apikey!;
         }
 
         if (userId) {
@@ -72,9 +72,11 @@ interface WebSocketClientEvents {
 export class WebSocketClient extends EventEmitter {
     private ws: WebSocket;
     private pingInterval?: ReturnType<typeof setInterval>;
+    private pongTimeout?: ReturnType<typeof setTimeout>;
     private reconnectAttempts: number = 0;
     private readonly maxReconnectAttempts: number = 5;
     private readonly pingIntervalMs: number = 30000;
+    private readonly pongTimeoutMs: number = 5000;
 
     constructor(url: string) {
         super();
@@ -98,45 +100,96 @@ export class WebSocketClient extends EventEmitter {
     }
 
     private connect(url: string): WebSocket {
-        return new WebSocket(url, {
-            timeout: 100000
-        });
+        return new WebSocket(url);
     }
 
     private setupPingPong(): void {
+        if (typeof this.ws.ping === "function") {
+            this.pingInterval = setInterval(() => {
+                if (this.ws.readyState === WebSocket.OPEN) {
+                    this.ws.ping();
+                }
+            }, this.pingIntervalMs);
+            return;
+        }
+
         this.pingInterval = setInterval(() => {
             if (this.ws.readyState === WebSocket.OPEN) {
-                this.ws.ping();
+                this.ws.send(JSON.stringify({ type: "ping", timestamp: Date.now() }));
+
+                this.pongTimeout = setTimeout(() => {
+                    this.handleConnectionLost();
+                }, this.pongTimeoutMs);
             }
         }, this.pingIntervalMs);
     }
 
+    private handleConnectionLost(): void {
+        this.ws.close(1000, "Connection lost - no pong received");
+
+        if (this.reconnectAttempts < this.maxReconnectAttempts) {
+            this.reconnectAttempts++;
+            setTimeout(() => {
+                this.ws = this.connect(this.ws.url);
+                this.setupEventHandlers();
+            }, 1000 * this.reconnectAttempts);
+        }
+    }
+
     private setupEventHandlers(): void {
-        this.ws.on("open", () => {
+        this.ws.onopen = () => {
             this.reconnectAttempts = 0;
             this.emit("open");
-        });
+        };
 
-        this.ws.on("close", (code: number, reason: string) => {
-            this.handleClose(code, reason);
-        });
+        this.ws.onclose = (event) => {
+            this.handleClose(event.code, event.reason);
+        };
 
-        this.ws.on("error", (error: Error) => {
+        this.ws.onerror = (event: WebSocket.ErrorEvent) => {
+            const error = new Error("WebSocket error occurred");
+            error.cause = event;
             this.emit("error", error);
-        });
+        };
 
-        this.ws.on("message", (data: WebSocket.Data) => {
-            this.emit("message", data);
-        });
+        this.ws.onmessage = (event: WebSocket.MessageEvent) => {
+            try {
+                const data = JSON.parse(event.data.toString());
 
-        this.ws.on("pong", () => {
-            this.emit("pong");
-        });
+                if (data.type === "ping") {
+                    this.ws.send(JSON.stringify({
+                        type: "pong",
+                        timestamp: data.timestamp
+                    }));
+                    return;
+                }
+                if (data.type === "pong") {
+                    if (this.pongTimeout) {
+                        clearTimeout(this.pongTimeout);
+                        this.pongTimeout = undefined;
+                    }
+                    this.emit("pong");
+                    return;
+                }
+                this.emit("message", event.data);
+            } catch (e) {
+                this.emit("message", event.data);
+            }
+        };
+
+        if (typeof this.ws.on === "function") {
+            this.ws.on("pong", () => {
+                this.emit("pong");
+            });
+        }
     }
 
     private handleClose(code: number, reason: string): void {
         if (this.pingInterval) {
             clearInterval(this.pingInterval);
+        }
+        if (this.pongTimeout) {
+            clearTimeout(this.pongTimeout);
         }
 
         this.emit("close", code, reason);
@@ -146,7 +199,7 @@ export class WebSocketClient extends EventEmitter {
             setTimeout(() => {
                 this.ws = this.connect(this.ws.url);
                 this.setupEventHandlers();
-            }, 1000 * this.reconnectAttempts); // Exponential backoff
+            }, 1000 * this.reconnectAttempts);
         }
     }
 

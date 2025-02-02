@@ -1,6 +1,6 @@
 export interface UriInterface {
     host: string;
-    port?: number;
+    port?: number | null;
     scheme: string;
     toString(): string;
 }
@@ -11,7 +11,7 @@ interface QueryParams {
 
 export class Uri implements UriInterface {
     host: string = "";
-    port?: number;
+    port?: number | null = null;
     scheme: string = "http";
     private path: string = "";
     private queryParams: QueryParams = {};
@@ -21,7 +21,7 @@ export class Uri implements UriInterface {
         return this;
     }
 
-    withPort(port?: number): this {
+    withPort(port?: number | null): this {
         this.port = port;
         return this;
     }
