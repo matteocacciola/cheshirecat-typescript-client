@@ -1,8 +1,11 @@
+import fs from "fs";
+import FormData from "form-data";
+import path from "path";
+import * as mime from "mime-types";
 import {AbstractEndpoint} from "./abstract";
 import {TokenOutput} from "../models/api/tokens";
 import {AdminOutput, ResetOutput} from "../models/api/admins";
 import {PluginCollectionOutput} from "../models/api/plugins";
-import fs from "fs";
 
 export class AdminsEndpoint extends AbstractEndpoint {
     protected prefix = "/admins";
@@ -42,14 +45,14 @@ export class AdminsEndpoint extends AbstractEndpoint {
     async postAdmin(
         username: string,
         password: string,
-        permissions?: Record<string, any>
+        permissions?: Record<string, any> | null,
     ): Promise<AdminOutput> {
         const payload: Record<string, any> = { username, password };
         if (permissions) {
             payload.permissions = permissions;
         }
 
-        return this.postJson<AdminOutput>(
+        return this.post<AdminOutput>(
             this.formatUrl("/users"),
             payload,
             this.systemId
@@ -64,7 +67,7 @@ export class AdminsEndpoint extends AbstractEndpoint {
      *
      * @returns A list of admin users.
      */
-    async getAdmins(limit?: number, skip?: number): Promise<AdminOutput[]> {
+    async getAdmins(limit?: number | null, skip?: number | null): Promise<AdminOutput[]> {
         const query: Record<string, any> = {};
         if (limit) query.limit = limit;
         if (skip) query.skip = skip;
@@ -102,9 +105,9 @@ export class AdminsEndpoint extends AbstractEndpoint {
      */
     async putAdmin(
         adminId: string,
-        username?: string,
-        password?: string,
-        permissions?: Record<string, any>
+        username?: string | null,
+        password?: string | null,
+        permissions?: Record<string, any> | null
     ): Promise<AdminOutput> {
         const payload: Record<string, any> = {};
         if (username) payload.username = username;
@@ -135,7 +138,7 @@ export class AdminsEndpoint extends AbstractEndpoint {
      * @returns The output of the reset operation.
      */
     async postFactoryReset(): Promise<ResetOutput> {
-        return this.postJson<ResetOutput>(
+        return this.post<ResetOutput>(
             this.formatUrl("/utils/factory/reset/"),
             {},
             this.systemId
@@ -160,8 +163,8 @@ export class AdminsEndpoint extends AbstractEndpoint {
      *
      * @returns The output of the create operation.
      */
-    async postAgentCreate(agentId?: string): Promise<ResetOutput> {
-        return this.postJson<ResetOutput>(
+    async postAgentCreate(agentId?: string | null): Promise<ResetOutput> {
+        return this.post<ResetOutput>(
             this.formatUrl("/utils/agent/create/"),
             {},
             agentId
@@ -175,8 +178,8 @@ export class AdminsEndpoint extends AbstractEndpoint {
      *
      * @returns The output of the reset operation.
      */
-    async postAgentReset(agentId?: string): Promise<ResetOutput> {
-        return this.postJson<ResetOutput>(
+    async postAgentReset(agentId?: string | null): Promise<ResetOutput> {
+        return this.post<ResetOutput>(
             this.formatUrl("/utils/agent/reset/"),
             {},
             agentId
@@ -190,8 +193,8 @@ export class AdminsEndpoint extends AbstractEndpoint {
      *
      * @returns The output of the reset operation.
      */
-    async postAgentDestroy(agentId?: string): Promise<ResetOutput> {
-        return this.postJson<ResetOutput>(
+    async postAgentDestroy(agentId?: string | null): Promise<ResetOutput> {
+        return this.post<ResetOutput>(
             this.formatUrl("/utils/agent/destroy/"),
             {},
             agentId
@@ -205,7 +208,7 @@ export class AdminsEndpoint extends AbstractEndpoint {
      *
      * @returns The available plugins.
      */
-    async getAvailablePlugins(pluginName?: string): Promise<PluginCollectionOutput> {
+    async getAvailablePlugins(pluginName?: string | null): Promise<PluginCollectionOutput> {
         return this.get<PluginCollectionOutput>(
             this.formatUrl("/plugins"),
             this.systemId,
@@ -224,17 +227,23 @@ export class AdminsEndpoint extends AbstractEndpoint {
      * @returns The output of the plugin installation.
      */
     async postInstallPluginFromZip(pathZip: string): Promise<PluginCollectionOutput> {
-        return this.postMultipart<PluginCollectionOutput>(
-            this.formatUrl("/plugins/upload"),
-            [
-                {
-                    name: "file",
-                    contents: fs.createReadStream(pathZip),
-                    filename: pathZip
-                }
-            ],
-            this.systemId
-        );
+        const form = new FormData();
+        const finalZipPath = path.basename(pathZip);
+
+        const fileBuffer = fs.readFileSync(finalZipPath);
+        form.append("file", fileBuffer, {
+            filename: finalZipPath,
+            contentType: mime.contentType(finalZipPath) || "application/octet-stream"
+        });
+
+        const response = await this.getHttpClient(this.systemId).post(this.formatUrl("/plugins/upload"), form, {
+            headers: {
+                ...form.getHeaders(),
+                'Content-Type': `multipart/form-data; boundary=${form.getBoundary()}`
+            },
+        });
+
+        return this.deserialize<PluginCollectionOutput>(response.data);
     }
 
     /**
@@ -245,7 +254,7 @@ export class AdminsEndpoint extends AbstractEndpoint {
      * @returns The output of the plugin installation.
      */
     async postInstallPluginFromRegistry(url: string): Promise<PluginCollectionOutput> {
-        return this.postJson<PluginCollectionOutput>(
+        return this.post<PluginCollectionOutput>(
             this.formatUrl("/plugins/upload/registry"),
             { url },
             this.systemId

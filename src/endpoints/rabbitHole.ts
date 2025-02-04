@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import FormData from "form-data";
+import * as mime from 'mime-types';
 import {AbstractEndpoint} from "./abstract";
 import {AllowedMimeTypesOutput} from "../models/api/rabbitholes";
 
@@ -24,15 +25,20 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
      */
     async postFile(
         filePath: string,
-        fileName?: string,
-        chunkSize?: number,
-        chunkOverlap?: number,
-        agentId?: string,
-        metadata?: Record<string, any>,
+        fileName?: string | null,
+        chunkSize?: number | null,
+        chunkOverlap?: number | null,
+        agentId?: string | null,
+        metadata?: Record<string, any> | null,
     ): Promise<any> {
         const form = new FormData();
         const finalFileName = fileName || path.basename(filePath);
-        form.append("file", fs.createReadStream(filePath), finalFileName);
+
+        const fileBuffer = fs.readFileSync(filePath);
+        form.append("file", fileBuffer, {
+            filename: finalFileName,
+            contentType: mime.contentType(finalFileName) || "application/octet-stream"
+        });
 
         if (chunkSize) {
             form.append("chunk_size", chunkSize.toString());
@@ -43,8 +49,14 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
         if (metadata) {
             form.append("metadata", JSON.stringify(metadata));
         }
+        const response = await this.getHttpClient(agentId).post(this.prefix, form, {
+            headers: {
+                ...form.getHeaders(),
+                'Content-Type': `multipart/form-data; boundary=${form.getBoundary()}`
+            },
+        });
 
-        return this.getHttpClient(agentId).post(this.prefix, form);
+        return response.data;
     }
 
     /**
@@ -63,16 +75,20 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
      */
     async postFiles(
         filePaths: string[],
-        chunkSize?: number,
-        chunkOverlap?: number,
-        agentId?: string,
-        metadata?: Record<string, any>,
+        chunkSize?: number | null,
+        chunkOverlap?: number | null,
+        agentId?: string | null,
+        metadata?: Record<string, any> | null,
     ): Promise<any> {
         const form = new FormData();
 
         filePaths.forEach((filePath) => {
             const fileName = path.basename(filePath);
-            form.append("files", fs.createReadStream(filePath), fileName);
+            const fileBuffer = fs.readFileSync(filePath);
+            form.append("files", fileBuffer, {
+                filename: fileName,
+                contentType: mime.contentType(fileName) || "application/octet-stream"
+            });
         });
 
         if (chunkSize) {
@@ -84,8 +100,9 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
         if (metadata) {
             form.append("metadata", JSON.stringify(metadata));
         }
+        const response = await this.getHttpClient(agentId).post(this.formatUrl("/batch"), form);
 
-        return this.getHttpClient(agentId).post(this.formatUrl("/batch"), form);
+        return response.data;
     }
 
     /**
@@ -104,10 +121,10 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
      */
     async postWeb(
         webUrl: string,
-        chunkSize?: number,
-        chunkOverlap?: number,
-        agentId?: string,
-        metadata?: Record<string, any>,
+        chunkSize?: number | null,
+        chunkOverlap?: number | null,
+        agentId?: string | null,
+        metadata?: Record<string, any> | null,
     ): Promise<any> {
         const payload: Record<string, any> = { url: webUrl };
 
@@ -121,7 +138,8 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
             payload["metadata"] = metadata;
         }
 
-        return this.getHttpClient(agentId).post(this.formatUrl("/web"), payload);
+        const response = await this.getHttpClient(agentId).post(this.formatUrl("/web"), payload);
+        return response.data;
     }
 
     /**
@@ -138,14 +156,26 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
      */
     async postMemory(
         filePath: string,
-        fileName?: string,
-        agentId?: string,
+        fileName?: string | null,
+        agentId?: string | null,
     ): Promise<any> {
         const form = new FormData();
         const finalFileName = fileName || path.basename(filePath);
-        form.append("file", fs.createReadStream(filePath), finalFileName);
 
-        return this.getHttpClient(agentId).post(this.formatUrl("/memory"), form);
+        const fileBuffer = fs.readFileSync(filePath);
+        form.append("file", fileBuffer, {
+            filename: finalFileName,
+            contentType: mime.contentType(finalFileName) || "application/octet-stream"
+        });
+
+        const response = await this.getHttpClient(agentId).post(this.formatUrl("/memory"), form, {
+            headers: {
+                ...form.getHeaders(),
+                'Content-Type': `multipart/form-data; boundary=${form.getBoundary()}`
+            },
+        });
+
+        return response.data;
     }
 
     /**
@@ -159,7 +189,7 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
      *
      * @returns The allowed MIME types for the RabbitHole API.
      */
-    async getAllowedMimeTypes(agentId?: string): Promise<AllowedMimeTypesOutput> {
+    async getAllowedMimeTypes(agentId?: string | null): Promise<AllowedMimeTypesOutput> {
         return this.get<AllowedMimeTypesOutput>(this.formatUrl("/allowed-mimetypes"), agentId);
     }
 }

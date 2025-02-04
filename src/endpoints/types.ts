@@ -1,4 +1,3 @@
-import {ReadStream} from "fs";
 import {AdminsEndpoint} from "./admins";
 import {AuthHandlerEndpoint} from "./authHandler";
 import {EmbedderEndpoint} from "./embedder";
@@ -24,9 +23,3 @@ export interface Endpoints {
     settings: () => SettingsEndpoint;
     users: () => UsersEndpoint;
 }
-
-export type MultipartItem = {
-    name: string;
-    contents: string | ReadStream;
-    filename?: string;
-};

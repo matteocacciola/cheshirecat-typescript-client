@@ -4,7 +4,7 @@ import {BaseBuilder} from "./types";
 export class SettingInputBuilder implements BaseBuilder {
     private name!: string;
     private value!: Record<string, any>;
-    private category?: string;
+    private category?: string | null;
 
     public static create(): SettingInputBuilder {
         return new SettingInputBuilder();

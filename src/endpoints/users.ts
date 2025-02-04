@@ -40,7 +40,7 @@ export class UsersEndpoint extends AbstractEndpoint {
      *
      * @returns The available permissions in the system.
      */
-    async getAvailablePermissions(agentId?: string): Promise<Permission> {
+    async getAvailablePermissions(agentId?: string | null): Promise<Permission> {
         const response = await this.getHttpClient(agentId).get("/auth/available-permissions");
 
         return this.deserialize<Permission>(response.data);
@@ -61,7 +61,12 @@ export class UsersEndpoint extends AbstractEndpoint {
      *
      * @returns The created user.
      */
-    async postUser(username: string, password: string, permissions?: string[], agentId?: string): Promise<UserOutput> {
+    async postUser(
+        username: string,
+        password: string,
+        permissions?: string[] | null,
+        agentId?: string | null
+    ): Promise<UserOutput> {
         const payload = {
             username,
             password,
@@ -71,7 +76,7 @@ export class UsersEndpoint extends AbstractEndpoint {
             payload.permissions = permissions;
         }
 
-        return this.postJson<UserOutput>(this.prefix, payload, agentId);
+        return this.post<UserOutput>(this.prefix, payload, agentId);
     }
 
     /**
@@ -85,7 +90,7 @@ export class UsersEndpoint extends AbstractEndpoint {
      *
      * @returns The list of users in the system.
      */
-    async getUsers(agentId?: string): Promise<UserOutput[]> {
+    async getUsers(agentId?: string | null): Promise<UserOutput[]> {
         const response = await this.getHttpClient(agentId).get(this.prefix);
 
         const users = response.data;
@@ -105,7 +110,7 @@ export class UsersEndpoint extends AbstractEndpoint {
      *
      * @returns The user in the system.
      */
-    async getUser(userId: string, agentId?: string): Promise<UserOutput> {
+    async getUser(userId: string, agentId?: string | null): Promise<UserOutput> {
         return this.get<UserOutput>(this.formatUrl(userId), agentId);
     }
 
@@ -127,10 +132,10 @@ export class UsersEndpoint extends AbstractEndpoint {
      */
     async putUser(
         userId: string,
-        username?: string,
-        password?: string,
-        permissions?: string[],
-        agentId?: string
+        username?: string | null,
+        password?: string | null,
+        permissions?: string[] | null,
+        agentId?: string | null,
     ): Promise<UserOutput> {
         const payload: any = {};
         if (username) {
@@ -157,7 +162,7 @@ export class UsersEndpoint extends AbstractEndpoint {
      *
      * @returns The deleted user.
      */
-    async deleteUser(userId: string, agentId?: string): Promise<UserOutput> {
+    async deleteUser(userId: string, agentId?: string | null): Promise<UserOutput> {
         return this.delete<UserOutput>(this.formatUrl(userId), agentId);
     }
 }

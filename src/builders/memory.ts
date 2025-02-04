@@ -10,17 +10,17 @@ export class MemoryBuilder implements BaseBuilder {
         return new MemoryBuilder();
     }
 
-    public setEpisodic(episodic?: Record<string, any>[]): MemoryBuilder {
+    public setEpisodic(episodic?: Record<string, any>[] | null): MemoryBuilder {
         this.episodic = episodic ?? [];
         return this;
     }
 
-    public setDeclarative(declarative?: Record<string, any>[]): MemoryBuilder {
+    public setDeclarative(declarative?: Record<string, any>[] | null): MemoryBuilder {
         this.declarative = declarative ?? [];
         return this;
     }
 
-    public setProcedural(procedural?: Record<string, any>[]): MemoryBuilder {
+    public setProcedural(procedural?: Record<string, any>[] | null): MemoryBuilder {
         this.procedural = procedural ?? [];
         return this;
     }

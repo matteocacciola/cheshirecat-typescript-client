@@ -1,7 +1,6 @@
 import {CheshireCatClient} from "../client";
 import {WebSocketClient} from "../clients/wsclient";
 import {AxiosInstance} from "axios";
-import {MultipartItem} from "./types";
 
 export abstract class AbstractEndpoint {
     protected client: CheshireCatClient;
@@ -38,7 +37,7 @@ export abstract class AbstractEndpoint {
         return this.deserialize<T>(response.data);
     }
 
-    protected async postJson<T>(
+    protected async post<T>(
         endpoint: string,
         payload?: any,
         agentId?: string | null,
@@ -47,21 +46,6 @@ export abstract class AbstractEndpoint {
         const options: any = {};
         if (payload) {
             options.json = payload;
-        }
-
-        const response = await this.getHttpClient(agentId, userId).post(endpoint, options);
-        return this.deserialize<T>(response.data);
-    }
-
-    protected async postMultipart<T>(
-        endpoint: string,
-        payload?: MultipartItem[],
-        agentId?: string | null,
-        userId?: string | null
-    ): Promise<T> {
-        const options: any = {};
-        if (payload) {
-            options.multipart = payload;
         }
 
         const response = await this.getHttpClient(agentId, userId).post(endpoint, options);

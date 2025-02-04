@@ -12,7 +12,7 @@ export class AuthHandlerEndpoint extends AbstractEndpoint {
      *
      * @returns The settings of all the authentication handlers.
      */
-    async getAuthHandlersSettings(agentId?: string): Promise<FactoryObjectSettingsOutput> {
+    async getAuthHandlersSettings(agentId?: string | null): Promise<FactoryObjectSettingsOutput> {
         return this.get<FactoryObjectSettingsOutput>(
             this.formatUrl("/settings"),
             agentId
@@ -30,7 +30,7 @@ export class AuthHandlerEndpoint extends AbstractEndpoint {
      */
     async getAuthHandlerSettings(
         authHandler: string,
-        agentId?: string
+        agentId?: string | null
     ): Promise<FactoryObjectSettingOutput> {
         return this.get<FactoryObjectSettingOutput>(
             this.formatUrl(`/settings/${authHandler}`),
@@ -51,7 +51,7 @@ export class AuthHandlerEndpoint extends AbstractEndpoint {
     async putAuthHandlerSettings(
         authHandler: string,
         values: Record<string, any>,
-        agentId?: string
+        agentId?: string | null
     ): Promise<FactoryObjectSettingOutput> {
         return this.put<FactoryObjectSettingOutput>(
             this.formatUrl(`/settings/${authHandler}`),

@@ -12,7 +12,7 @@ export class LargeLanguageModelEndpoint extends AbstractEndpoint {
      *
      * @returns The settings of all the large language models
      */
-    async getLargeLanguageModelsSettings(agentId?: string): Promise<FactoryObjectSettingsOutput> {
+    async getLargeLanguageModelsSettings(agentId?: string | null): Promise<FactoryObjectSettingsOutput> {
         return this.get<FactoryObjectSettingsOutput>(
             this.formatUrl("/settings"),
             agentId
@@ -28,7 +28,7 @@ export class LargeLanguageModelEndpoint extends AbstractEndpoint {
      *
      * @returns The settings of the large language model
      */
-    async getLargeLanguageModelSettings(llm: string, agentId?: string): Promise<FactoryObjectSettingOutput> {
+    async getLargeLanguageModelSettings(llm: string, agentId?: string | null): Promise<FactoryObjectSettingOutput> {
         return this.get<FactoryObjectSettingOutput>(
             this.formatUrl(`/settings/${llm}`),
             agentId
@@ -45,7 +45,11 @@ export class LargeLanguageModelEndpoint extends AbstractEndpoint {
      *
      * @returns The updated settings of the large language model
      */
-    async putLargeLanguageModelSettings(llm: string, values: Record<string, any>, agentId?: string): Promise<FactoryObjectSettingOutput> {
+    async putLargeLanguageModelSettings(
+        llm: string,
+        values: Record<string, any>,
+        agentId?: string | null
+    ): Promise<FactoryObjectSettingOutput> {
         return this.put<FactoryObjectSettingOutput>(
             this.formatUrl(`/settings/${llm}`),
             values,

@@ -75,5 +75,5 @@ export interface MemoryPointsDeleteByMetadataOutput {
 export interface MemoryPointsOutput
 {
     points: VectorRecord;
-    nextOffset?: string | number;
+    nextOffset?: string | number | null;
 }

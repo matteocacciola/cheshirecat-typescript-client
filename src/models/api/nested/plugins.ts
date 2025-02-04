@@ -6,13 +6,13 @@ export interface PluginSchemaSettings {
 
 export interface PluginSettingsOutput {
     name: string;
-    scheme?: PluginSchemaSettings;
+    scheme?: PluginSchemaSettings | null;
     value: Record<string, any>;
 }
 
 export interface PropertySettingsOutput {
     default: any;
-    extra?: Record<string, any>;
+    extra?: Record<string, any> | null;
     title: string;
     type: string;
 }

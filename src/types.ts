@@ -14,11 +14,11 @@ export interface MemoryPoint {
 export interface SettingInput {
     name: string;
     value: Record<string, any>;
-    category?: string;
+    category?: string | null;
 }
 
 export interface Why {
-    input?: string;
+    input?: string | null;
     intermediateSteps?: Record<string, any>[];
     memory: Memory;
     modelInteractions?: Record<string, any>[];

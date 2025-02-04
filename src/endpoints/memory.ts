@@ -26,7 +26,7 @@ export class MemoryEndpoint extends AbstractEndpoint {
      *
      * @returns The collections of memory points.
      */
-    async getMemoryCollections(agentId?: string): Promise<CollectionsOutput> {
+    async getMemoryCollections(agentId?: string | null): Promise<CollectionsOutput> {
         return this.get(this.formatUrl("/collections"), agentId);
     }
 
@@ -38,7 +38,7 @@ export class MemoryEndpoint extends AbstractEndpoint {
      *
      * @returns The output of the deletion operation.
      */
-    async deleteAllMemoryCollectionPoints(agentId?: string): Promise<CollectionPointsDestroyOutput> {
+    async deleteAllMemoryCollectionPoints(agentId?: string | null): Promise<CollectionPointsDestroyOutput> {
         return this.delete<CollectionPointsDestroyOutput>(this.formatUrl("/collections"), agentId);
     }
 
@@ -51,7 +51,10 @@ export class MemoryEndpoint extends AbstractEndpoint {
      *
      * @returns The output of the deletion operation.
      */
-    async deleteAllSingleMemoryCollectionPoints(collection: Collection, agentId?: string): Promise<CollectionPointsDestroyOutput> {
+    async deleteAllSingleMemoryCollectionPoints(
+        collection: Collection,
+        agentId?: string | null
+    ): Promise<CollectionPointsDestroyOutput> {
         return this.delete<CollectionPointsDestroyOutput>(this.formatUrl("/collections/" + collection.toString()), agentId);
     }
 
@@ -69,7 +72,10 @@ export class MemoryEndpoint extends AbstractEndpoint {
      *
      * @returns The conversation history.
      */
-    async getConversationHistory(agentId?: string, userId?: string): Promise<ConversationHistoryOutput> {
+    async getConversationHistory(
+        agentId?: string | null,
+        userId?: string | null
+    ): Promise<ConversationHistoryOutput> {
         return this.get<ConversationHistoryOutput>(this.formatUrl("/conversation_history"), agentId, userId);
     }
 
@@ -83,7 +89,10 @@ export class MemoryEndpoint extends AbstractEndpoint {
      *
      * @returns The output of the deletion operation.
      */
-    async deleteConversationHistory(agentId?: string, userId?: string): Promise<ConversationHistoryDeleteOutput> {
+    async deleteConversationHistory(
+        agentId?: string | null,
+        userId?: string | null
+    ): Promise<ConversationHistoryDeleteOutput> {
         return this.delete<ConversationHistoryDeleteOutput>(this.formatUrl("/conversation_history"), agentId, userId);
     }
 
@@ -107,9 +116,9 @@ export class MemoryEndpoint extends AbstractEndpoint {
         text: string,
         images?: string[] | null,
         audio?: string[] | null,
-        why?: Why,
-        agentId?: string,
-        userId?: string
+        why?: Why | null,
+        agentId?: string | null,
+        userId?: string | null,
     ): Promise<ConversationHistoryOutput> {
         const payload = {
             who: who.toString(),
@@ -119,7 +128,7 @@ export class MemoryEndpoint extends AbstractEndpoint {
             ...(why && {why: why.toArray()}),
         };
 
-        return this.postJson<ConversationHistoryOutput>(this.formatUrl("/conversation_history"), payload, agentId, userId);
+        return this.post<ConversationHistoryOutput>(this.formatUrl("/conversation_history"), payload, agentId, userId);
     }
 
     // END Memory Conversation History API --
@@ -143,10 +152,10 @@ export class MemoryEndpoint extends AbstractEndpoint {
      */
     async getMemoryRecall(
         text: string,
-        k?: number,
+        k?: number | null,
         metadata?: any,
-        agentId?: string,
-        userId?: string
+        agentId?: string | null,
+        userId?: string | null,
     ): Promise<MemoryRecallOutput> {
         const query = {
             text,
@@ -172,14 +181,14 @@ export class MemoryEndpoint extends AbstractEndpoint {
     async postMemoryPoint(
         collection: Collection,
         memoryPoint: MemoryPointOutput,
-        agentId?: string,
-        userId?: string
+        agentId?: string | null,
+        userId?: string | null,
     ): Promise<MemoryPointOutput> {
         if (userId && !memoryPoint.metadata["source"]) {
             memoryPoint.metadata["source"] = userId;
         }
 
-        return this.postJson<MemoryPointOutput>(this.formatUrl("/collections/" + collection.toString() + "/points"), memoryPoint, agentId);
+        return this.post<MemoryPointOutput>(this.formatUrl("/collections/" + collection.toString() + "/points"), memoryPoint, agentId);
     }
 
     /**
@@ -199,8 +208,8 @@ export class MemoryEndpoint extends AbstractEndpoint {
         collection: Collection,
         memoryPoint: MemoryPointOutput,
         pointId: string,
-        agentId?: string,
-        userId?: string
+        agentId?: string | null,
+        userId?: string | null,
     ): Promise<MemoryPointOutput> {
         if (userId && !memoryPoint.metadata["source"]) {
             memoryPoint.metadata["source"] = userId;
@@ -219,7 +228,11 @@ export class MemoryEndpoint extends AbstractEndpoint {
      *
      * @returns The memory point output.
      */
-    async deleteMemoryPoint(collection: Collection, pointId: string, agentId?: string): Promise<MemoryPointDeleteOutput> {
+    async deleteMemoryPoint(
+        collection: Collection,
+        pointId: string,
+        agentId?: string | null
+    ): Promise<MemoryPointDeleteOutput> {
         return this.delete<MemoryPointDeleteOutput>(this.formatUrl("/collections/" + collection.toString() + "/points/" + pointId), agentId);
     }
 
@@ -237,7 +250,7 @@ export class MemoryEndpoint extends AbstractEndpoint {
     async deleteMemoryPointsByMetadata(
         collection: Collection,
         metadata?: any,
-        agentId?: string
+        agentId?: string | null,
     ): Promise<MemoryPointsDeleteByMetadataOutput> {
         return this.delete<MemoryPointsDeleteByMetadataOutput>(
             this.formatUrl("/collections/" + collection.toString() + "/points"),
@@ -261,9 +274,9 @@ export class MemoryEndpoint extends AbstractEndpoint {
      */
     async getMemoryPoints(
         collection: Collection,
-        limit?: number,
-        offset?: number,
-        agentId?: string
+        limit?: number | null,
+        offset?: number | null,
+        agentId?: string | null,
     ): Promise<MemoryPointsOutput> {
         const query = {
             ...(limit && {limit}),

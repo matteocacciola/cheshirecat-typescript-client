@@ -4,8 +4,8 @@ import {Uri} from "./uri";
 export class HttpClient {
     protected httpClient: AxiosInstance;
     protected httpUri: Uri;
-    protected apikey?: string;
-    protected token?: string;
+    protected apikey?: string | null;
+    protected token?: string | null;
     protected userId?: string | null = null;
     protected agentId?: string;
     protected middlewares: Record<string, (config: InternalAxiosRequestConfig) => InternalAxiosRequestConfig>;
@@ -13,7 +13,7 @@ export class HttpClient {
     constructor(
         host: string,
         port?: number,
-        apikey?: string,
+        apikey?: string | null,
         isHTTPs: boolean = false
     ) {
         this.apikey = apikey;

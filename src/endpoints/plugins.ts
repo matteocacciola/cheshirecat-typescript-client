@@ -14,7 +14,7 @@ export class PluginsEndpoint extends AbstractEndpoint {
      *
      * @returns The available plugins.
      */
-    async getAvailablePlugins(pluginName?: string, agentId?: string): Promise<PluginCollectionOutput> {
+    async getAvailablePlugins(pluginName?: string | null, agentId?: string | null): Promise<PluginCollectionOutput> {
         return this.get<PluginCollectionOutput>(
             this.prefix,
             agentId,
@@ -32,7 +32,7 @@ export class PluginsEndpoint extends AbstractEndpoint {
      *
      * @returns The plugin toggle output.
      */
-    async putTogglePlugin(pluginId: string, agentId?: string): Promise<PluginToggleOutput> {
+    async putTogglePlugin(pluginId: string, agentId?: string | null): Promise<PluginToggleOutput> {
         return this.put<PluginToggleOutput>(
             this.formatUrl(`/toggle/${pluginId}`),
             {},
@@ -48,7 +48,7 @@ export class PluginsEndpoint extends AbstractEndpoint {
      *
      * @returns The plugins settings.
      */
-    async getPluginsSettings(agentId?: string): Promise<PluginsSettingsOutput> {
+    async getPluginsSettings(agentId?: string | null): Promise<PluginsSettingsOutput> {
         return this.get<PluginsSettingsOutput>(
             this.formatUrl("/settings"),
             agentId
@@ -64,7 +64,7 @@ export class PluginsEndpoint extends AbstractEndpoint {
      *
      * @returns The plugin settings.
      */
-    async getPluginSettings(pluginId: string, agentId?: string): Promise<PluginSettingsOutput> {
+    async getPluginSettings(pluginId: string, agentId?: string | null): Promise<PluginSettingsOutput> {
         return this.get<PluginSettingsOutput>(
             this.formatUrl(`/settings/${pluginId}`),
             agentId
@@ -81,7 +81,7 @@ export class PluginsEndpoint extends AbstractEndpoint {
      *
      * @returns The plugin settings.
      */
-    async putPluginSettings(pluginId: string, values: any, agentId?: string): Promise<PluginSettingsOutput> {
+    async putPluginSettings(pluginId: string, values: any, agentId?: string | null): Promise<PluginSettingsOutput> {
         return this.put<PluginSettingsOutput>(
             this.formatUrl(`/settings/${pluginId}`),
             values,

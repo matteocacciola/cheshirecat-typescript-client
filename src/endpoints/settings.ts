@@ -15,7 +15,7 @@ export class SettingsEndpoint extends AbstractEndpoint {
      *
      * @returns The settings of the agent
      */
-    async getSettings(agentId?: string): Promise<FactoryObjectSettingsOutput> {
+    async getSettings(agentId?: string | null): Promise<FactoryObjectSettingsOutput> {
         return this.get<FactoryObjectSettingsOutput>(
             this.formatUrl("/settings"),
             agentId
@@ -32,8 +32,8 @@ export class SettingsEndpoint extends AbstractEndpoint {
      *
      * @returns The created setting
      */
-    async postSetting( values: SettingInput, agentId?: string): Promise<SettingOutputItem> {
-        return this.postJson<SettingOutputItem>(
+    async postSetting( values: SettingInput, agentId?: string | null): Promise<SettingOutputItem> {
+        return this.post<SettingOutputItem>(
             this.prefix,
             values.toArray(),
             agentId,
@@ -50,7 +50,7 @@ export class SettingsEndpoint extends AbstractEndpoint {
      *
      * @returns The setting
      */
-    async getSetting(setting: string, agentId?: string): Promise<FactoryObjectSettingsOutput> {
+    async getSetting(setting: string, agentId?: string | null): Promise<FactoryObjectSettingsOutput> {
         return this.get<FactoryObjectSettingsOutput>(
             this.formatUrl(`/settings/${setting}`),
             agentId
@@ -68,7 +68,11 @@ export class SettingsEndpoint extends AbstractEndpoint {
      *
      * @returns The updated setting
      */
-    async putSetting(setting: string, values: Record<string, any>, agentId?: string): Promise<FactoryObjectSettingsOutput> {
+    async putSetting(
+        setting: string,
+        values: Record<string, any>,
+        agentId?: string | null
+    ): Promise<FactoryObjectSettingsOutput> {
         return this.put<FactoryObjectSettingsOutput>(
             this.formatUrl(`/settings/${setting}`),
             values,
@@ -86,7 +90,7 @@ export class SettingsEndpoint extends AbstractEndpoint {
      *
      * @returns The deleted setting
      */
-    async deleteSetting(setting: string, agentId?: string): Promise<FactoryObjectSettingsOutput> {
+    async deleteSetting(setting: string, agentId?: string | null): Promise<FactoryObjectSettingsOutput> {
         return this.delete<FactoryObjectSettingsOutput>(
             this.formatUrl(`/settings/${setting}`),
             agentId

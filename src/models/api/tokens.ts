@@ -1,4 +1,4 @@
 export class TokenOutput {
     accessToken: string;
-    tokenType?: string = "Bearer";
+    tokenType?: string | null = "Bearer";
 }

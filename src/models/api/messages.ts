@@ -1,7 +1,7 @@
 import {MessageBase, Why} from "../dtos";
 
 export class MessageOutput extends MessageBase {
-    type?: string = "chat";
+    type?: string | null = "chat";
     why: Why;
     error?: boolean = false;
     readonly content: string; // deprecated
