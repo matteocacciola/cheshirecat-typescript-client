@@ -16,7 +16,7 @@
   "keywords": [],
   "author": "Matteo Cacciola <matteo.cacciola@gmail.com>",
   "license": "GPL-3.0-only",
-  "description": "",
+  "description": "Typescript Client for the CheshireCat API",
   "devDependencies": {
     "@eslint/js": "^9.18.0",
     "@types/websocket": "^1.0.10",
