@@ -22,6 +22,38 @@ export class HookOutput {
     }
 }
 
+export class ToolOutput {
+    name: string;
+
+    public toArray(): object {
+        return {
+            name: this.name,
+        };
+    }
+}
+
+export class FormOutput {
+    name: string;
+
+    public toArray(): object {
+        return {
+            name: this.name,
+        };
+    }
+}
+
+export class EndpointOutput {
+    name: string;
+    tags: string[];
+
+    public toArray(): object {
+        return {
+            name: this.name,
+            tags: this.tags,
+        };
+    }
+}
+
 export class PluginCollectionOutput {
     filters: FilterOutput = new FilterOutput();
     installed: PluginItemOutput[] = [];
@@ -49,6 +81,8 @@ export class PluginItemOutput {
     active: boolean;
     hooks: HookOutput[];
     tools: ToolOutput[];
+    forms: FormOutput[];
+    endpoints: EndpointOutput[];
 
     public toArray(): object {
         return {
@@ -64,6 +98,8 @@ export class PluginItemOutput {
             active: this.active,
             hooks: this.hooks.map(item => item.toArray()),
             tools: this.tools.map(item => item.toArray()),
+            forms: this.forms.map(item => item.toArray()),
+            endpoints: this.endpoints.map(item => item.toArray()),
         };
     }
 }
@@ -102,14 +138,4 @@ export interface PluginsSettingsOutput {
 
 export interface PluginToggleOutput {
     info: string;
-}
-
-export class ToolOutput {
-    name: string;
-
-    public toArray(): object {
-        return {
-            name: this.name,
-        };
-    }
 }
