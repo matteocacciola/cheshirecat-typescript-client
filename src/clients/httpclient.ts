@@ -12,7 +12,7 @@ export class HttpClient {
 
     constructor(
         host: string,
-        port?: number,
+        port?: number | null,
         apikey?: string | null,
         isHTTPs: boolean = false
     ) {
