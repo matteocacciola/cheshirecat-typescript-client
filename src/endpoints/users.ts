@@ -64,7 +64,7 @@ export class UsersEndpoint extends AbstractEndpoint {
     async postUser(
         username: string,
         password: string,
-        permissions?: string[] | null,
+        permissions?: Record<string, string[]> | null,
         agentId?: string | null
     ): Promise<UserOutput> {
         const payload = {
@@ -134,7 +134,7 @@ export class UsersEndpoint extends AbstractEndpoint {
         userId: string,
         username?: string | null,
         password?: string | null,
-        permissions?: string[] | null,
+        permissions?: Record<string, string[]> | null,
         agentId?: string | null,
     ): Promise<UserOutput> {
         const payload: any = {};

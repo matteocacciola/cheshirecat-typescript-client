@@ -45,7 +45,7 @@ export class AdminsEndpoint extends AbstractEndpoint {
     async postAdmin(
         username: string,
         password: string,
-        permissions?: Record<string, any> | null,
+        permissions?: Record<string, string[]> | null,
     ): Promise<AdminOutput> {
         const payload: Record<string, any> = { username, password };
         if (permissions) {
@@ -107,7 +107,7 @@ export class AdminsEndpoint extends AbstractEndpoint {
         adminId: string,
         username?: string | null,
         password?: string | null,
-        permissions?: Record<string, any> | null
+        permissions?: Record<string, string[]> | null
     ): Promise<AdminOutput> {
         const payload: Record<string, any> = {};
         if (username) payload.username = username;
