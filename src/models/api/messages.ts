@@ -6,8 +6,8 @@ export class MessageOutput extends MessageBase {
     error?: boolean = false;
     readonly content: string; // deprecated
 
-    constructor(public text: string = "", public images: string[] | null = null, public audio: string[] | null = null) {
-        super();
+    constructor(public text: string = "", public image: string | null = null) {
+        super(text, image);
         this.content = text;
     }
 

@@ -43,20 +43,21 @@ export class MemoryPoint extends BaseDTO {
 
 export class MessageBase extends BaseDTO {
     public text: string;
-    public images?: string[] | null = [];
-    public audio?: string[] | null = [];
+    public image: string | null;
+
+    constructor(text: string = "", image: string | null = null) {
+        super();
+        this.text = text;
+        this.image = image;
+    }
 
     public toArray(): Record<string, any> {
         const result: Record<string, any> = {
             text: this.text
         };
 
-        if (this.images?.length) {
-            result.images = this.images;
-        }
-
-        if (this.audio?.length) {
-            result.audio = this.audio;
+        if (this.image) {
+            result.image = this.image;
         }
 
         return result;
@@ -66,14 +67,12 @@ export class MessageBase extends BaseDTO {
 export class Message extends MessageBase {
     constructor(
         text: string,
-        images?: string[],
-        audio?: string[],
+        image?: string,
         public additionalFields?: Record<string, any>
     ) {
         super();
         this.text = text;
-        this.images = images;
-        this.audio = audio;
+        this.image = image || null;
     }
 
     public toArray(): Record<string, any> {

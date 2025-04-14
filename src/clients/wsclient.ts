@@ -1,6 +1,7 @@
 import WebSocket from "isomorphic-ws";
 import {Uri} from "./uri";
 import {EventEmitter} from "events";
+import {SocketError, SocketResponse} from "../models/socket";
 
 export class WSClient {
     protected host: string;
@@ -8,6 +9,7 @@ export class WSClient {
     protected apikey?: string | null = null;
     protected token?: string | null = null;
     protected isWSS: boolean;
+    protected wsClient?: WebSocketClient;
 
     constructor(
         host: string,
@@ -32,7 +34,11 @@ export class WSClient {
             throw new Error("You must provide an apikey or a token");
         }
 
-        return this.createWsClient(agentId, userId);
+        if (!this.wsClient) {
+            this.wsClient = this.createWsClient(agentId, userId);
+        }
+
+        return this.wsClient;
     }
 
     public getWsUri(agentId?: string | null, userId?: string | null): Uri {
@@ -64,8 +70,8 @@ export class WSClient {
 interface WebSocketClientEvents {
     open: () => void;
     close: (code: number, reason: string) => void;
-    error: (error: Error) => void;
-    message: (data: WebSocket.Data) => void;
+    error: (error: SocketError, event?: WebSocket.ErrorEvent) => void;
+    message: (data: SocketResponse) => void;
     pong: () => void;
 }
 
@@ -147,34 +153,46 @@ export class WebSocketClient extends EventEmitter {
         };
 
         this.ws.onerror = (event: WebSocket.ErrorEvent) => {
-            const error = new Error("WebSocket error occurred");
-            error.cause = event;
-            this.emit("error", error);
+            let errorName: string = "SocketError";
+            if (this.ws.readyState === WebSocket.CLOSED) {
+                errorName = "SocketClosed";
+            }
+            if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+                errorName = "FailedRetry";
+            }
+
+            const error = { "name": errorName, "description": event.message || "Unknown error" } as SocketError;
+            this.emit("error", error, event);
         };
 
         this.ws.onmessage = (event: WebSocket.MessageEvent) => {
-            try {
-                const data = JSON.parse(event.data.toString());
+            if (typeof event.data != "string") return;
 
-                if (data.type === "ping") {
-                    this.ws.send(JSON.stringify({
-                        type: "pong",
-                        timestamp: data.timestamp
-                    }));
-                    return;
-                }
-                if (data.type === "pong") {
-                    if (this.pongTimeout) {
-                        clearTimeout(this.pongTimeout);
-                        this.pongTimeout = undefined;
-                    }
-                    this.emit("pong");
-                    return;
-                }
-                this.emit("message", event.data);
-            } catch (e) {
-                this.emit("message", event.data);
+            const data = JSON.parse(event.data);
+            const message = data as SocketError | SocketResponse
+
+            if (data.type === "ping") {
+                this.ws.send(JSON.stringify({
+                    type: "pong",
+                    timestamp: data.timestamp
+                }));
+                return;
             }
+            if (data.type === "pong") {
+                if (this.pongTimeout) {
+                    clearTimeout(this.pongTimeout);
+                    this.pongTimeout = undefined;
+                }
+                this.emit("pong");
+                return;
+            }
+
+            if ("type" in data && data.type !== "error") {
+                this.emit("message", message as SocketResponse);
+                return;
+            }
+
+            this.emit("error", message as SocketError);
         };
 
         if (typeof this.ws.on === "function") {

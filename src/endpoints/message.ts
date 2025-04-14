@@ -2,6 +2,7 @@ import {AbstractEndpoint} from "./abstract";
 import {MessageOutput} from "../models/api/messages";
 import {Message} from "../models/dtos";
 import WebSocket from "ws";
+import {SocketRequest} from "../models/socket";
 
 export class MessageEndpoint extends AbstractEndpoint {
     /**
@@ -50,8 +51,8 @@ export class MessageEndpoint extends AbstractEndpoint {
                 client.send(json);
             });
 
-            client.on("message", (data: WebSocket.Data) => {
-                const content = typeof data === 'string' ? data : data.toString();
+            client.on("message", (data: SocketRequest) => {
+                const content = data.toString();
 
                 // Handle non-chat messages
                 if (!content.includes('"type":"chat"')) {
@@ -69,7 +70,7 @@ export class MessageEndpoint extends AbstractEndpoint {
             });
 
             client.on("error", (error) => {
-                reject(new Error("WebSocket error: " + error.message));
+                reject(new Error("WebSocket error: " + error.description));
             });
 
             client.on("close", () => {

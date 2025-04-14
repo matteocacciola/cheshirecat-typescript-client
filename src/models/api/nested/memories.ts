@@ -25,8 +25,7 @@ export class ConversationHistoryItemContent extends MessageBase {
     public toArray(): object {
         let data: object = {
             text: this.text,
-            images: this.images,
-            audio: this.audio,
+            image: this.image,
         };
 
         if (this.why !== null) {

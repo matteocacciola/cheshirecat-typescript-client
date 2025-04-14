@@ -3,7 +3,9 @@ import {
     CollectionPointsDestroyOutput,
     CollectionsOutput,
     ConversationHistoryDeleteOutput,
-    ConversationHistoryOutput, MemoryPointDeleteOutput, MemoryPointOutput
+    ConversationHistoryOutput,
+    MemoryPointDeleteOutput,
+    MemoryPointOutput
 } from "../models/api/memories";
 import {Collection, Role} from "../enums";
 import {
@@ -103,8 +105,7 @@ export class MemoryEndpoint extends AbstractEndpoint {
      *
      * @param who The speaker of the conversation history.
      * @param text The text of the conversation history.
-     * @param images The images of the conversation history.
-     * @param audio The audio of the conversation history.
+     * @param image The image of the conversation history.
      * @param why The reason for the conversation history.
      * @param agentId The agent ID for multi-agent installations.
      * @param userId The user ID to add the conversation history to.
@@ -114,8 +115,7 @@ export class MemoryEndpoint extends AbstractEndpoint {
     async postConversationHistory(
         who: Role,
         text: string,
-        images?: string[] | null,
-        audio?: string[] | null,
+        image?: string | null,
         why?: Why | null,
         agentId?: string | null,
         userId?: string | null,
@@ -123,8 +123,7 @@ export class MemoryEndpoint extends AbstractEndpoint {
         const payload = {
             who: who.toString(),
             text,
-            ...(images && {images}),
-            ...(audio && {audio}),
+            ...(image && {image}),
             ...(why && {why: why.toArray()}),
         };
 
