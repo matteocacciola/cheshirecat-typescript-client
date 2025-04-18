@@ -1,6 +1,9 @@
 {
   "name": "cheshirecat-typescript-client",
-  "version": "1.1.0",
+  "version": "1.1.1",
+  "engines": {
+    "node": "22.x"
+  },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -30,9 +33,9 @@
     "typescript-eslint": "^8.22.0"
   },
   "dependencies": {
-    "axios": "^1.7.9",
+    "axios": "^1.8.4",
     "events": "^3.3.0",
-    "fs": "^0.0.1-security",
+    "fs": "^0.0.2",
     "isomorphic-ws": "^5.0.0",
     "mime-types": "^2.1.35",
     "ws": "^8.18.0"

@@ -1,4 +1,4 @@
-import fs from "fs";
+import { readFile } from "fs/promises";
 import FormData from "form-data";
 import path from "path";
 import * as mime from "mime-types";
@@ -230,7 +230,7 @@ export class AdminsEndpoint extends AbstractEndpoint {
         const form = new FormData();
         const finalZipPath = path.basename(pathZip);
 
-        const fileBuffer = fs.readFileSync(finalZipPath);
+        const fileBuffer = await readFile(finalZipPath);
         form.append("file", fileBuffer, {
             filename: finalZipPath,
             contentType: mime.contentType(finalZipPath) || "application/octet-stream"
