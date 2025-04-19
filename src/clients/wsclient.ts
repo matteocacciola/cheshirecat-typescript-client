@@ -121,7 +121,7 @@ export class WebSocketClient extends EventEmitter {
 
         this.pingInterval = setInterval(() => {
             if (this.ws.readyState === WebSocket.OPEN) {
-                this.ws.send(JSON.stringify({ type: "ping", timestamp: Date.now() }));
+                this.ws.send(JSON.stringify({ text: { type: "ping", timestamp: Date.now() } }));
 
                 this.pongTimeout = setTimeout(() => {
                     this.handleConnectionLost();
@@ -171,14 +171,16 @@ export class WebSocketClient extends EventEmitter {
             const data = JSON.parse(event.data);
             const message = data as SocketError | SocketResponse
 
-            if (data.type === "ping") {
+            if ("text" in data && "type" in data.text && data.text.type === "ping") {
                 this.ws.send(JSON.stringify({
-                    type: "pong",
-                    timestamp: data.timestamp
+                    text: {
+                        type: "pong",
+                        timestamp: data.timestamp
+                    }
                 }));
                 return;
             }
-            if (data.type === "pong") {
+            if ("text" in data && "type" in data.text && data.text.type === "pong") {
                 if (this.pongTimeout) {
                     clearTimeout(this.pongTimeout);
                     this.pongTimeout = undefined;
