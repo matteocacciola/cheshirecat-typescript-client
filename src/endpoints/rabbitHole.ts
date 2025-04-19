@@ -1,30 +1,112 @@
-import {readFileSync} from "fs";
-import * as path from "path";
-import FormData from "form-data";
-import * as mime from 'mime-types';
+/**
+ * @file RabbitHoleEndpoint.ts
+ *
+ * Isomorphic implementation of the RabbitHoleEndpoint that works in both
+ * Node.js (server) and browser (client) environments. This class handles
+ * file uploads to the RabbitHole API with environment-specific file handling.
+ */
 import {AbstractEndpoint} from "./abstract";
+import FormData from "form-data";
+import * as mime from "mime-types";
+import {isNodeEnvironment } from "../utils/environment";
+import {FileSource, readFile, getFileName} from "../utils/file-reader";
 import {AllowedMimeTypesOutput} from "../models/api/rabbitholes";
 
 export class RabbitHoleEndpoint extends AbstractEndpoint {
     protected prefix = "/rabbithole";
 
+    private throwError(fileSource: FileSource, error: any)  {
+        // Provide more helpful error messages based on environment
+        if (!isNodeEnvironment() && typeof fileSource === "string") {
+            throw new Error("In browser environments, fileSource must be a File object, not a file path string.");
+        } else if (isNodeEnvironment() && typeof fileSource !== 'string') {
+            throw new Error("In Node.js environments, fileSource must be a file path string.");
+        }
+
+        // Re-throw the original error
+        throw error;
+    }
+
+    private async appendFileToForm(form: FormData, fileSource: FileSource, formKey: string, fileName?: string | null) {
+        // Read file content in an environment-appropriate way
+        const fileBuffer = await readFile(fileSource);
+
+        // Get appropriate filename
+        const finalFileName = fileName || await getFileName(fileSource);
+
+        form.append(formKey, fileBuffer, {
+            filename: finalFileName,
+            contentType: mime.contentType(finalFileName) || "application/octet-stream"
+        });
+    }
+
+    private appendQueryDataToForm(
+        form: FormData,
+        chunkSize?: number | null,
+        chunkOverlap?: number | null,
+        metadata?: Record<string, any> | null
+    ) {
+        if (chunkSize) {
+            form.append("chunk_size", chunkSize.toString());
+        }
+        if (chunkOverlap) {
+            form.append("chunk_overlap", chunkOverlap.toString());
+        }
+        if (metadata) {
+            form.append("metadata", JSON.stringify(metadata));
+        }
+    }
+
+    private async submitForm(form: FormData, url: string, agentId?: string | null) {
+        const response = await this.getHttpClient(agentId).post(url, form, {
+            headers: {
+                ...form.getHeaders(),
+                "Content-Type": `multipart/form-data; boundary=${form.getBoundary()}`
+            }
+        });
+
+        return response.data;
+    }
+
     /**
-     * This method posts a file to the RabbitHole API. The file is uploaded to the RabbitHole server and ingested into
-     * the RAG system. The file is then processed by the RAG system and the results are stored in the RAG database.
-     * The process is asynchronous and the results are returned in a batch.
-     * The CheshireCat processes the injection in background and the client will be informed at the end of the process.
+     * Posts a file to the RabbitHole API for ingestion into the RAG system.
      *
-     * @param filePath The path to the file to be uploaded.
-     * @param fileName The name of the file to be uploaded. If not provided, the name of the file will be used.
-     * @param chunkSize The size of the chunks to be used for the upload. If not provided, the default chunk size will be used.
-     * @param chunkOverlap The size of the overlap between chunks. If not provided, the default overlap size will be used.
-     * @param agentId The ID of the agent to be used for the upload. If not provided, the default agent will be used.
-     * @param metadata Additional metadata to be associated with the file.
+     * This method works in both Node.js and browser environments:
+     * - In Node.js: Pass a file path string as `fileSource`
+     * - In browser: Pass a File object as `fileSource`
      *
-     * @returns The response from the RabbitHole API.
+     * The file is uploaded to the RabbitHole server and processed asynchronously.
+     * The CheshireCat processes the injection in background, and the client will be informed when processing completes.
+     *
+     * @param fileSource The source of the file to upload:
+     *                  - In Node.js: A string path to the file
+     *                  - In browser: A File object
+     * @param fileName Optional custom name for the file. If not provided:
+     *                - In Node.js: The basename of the file path is used
+     *                - In browser: The name property of the File object is used
+     * @param chunkSize Optional size of chunks for RAG processing
+     * @param chunkOverlap Optional overlap between chunks
+     * @param agentId Optional ID of the agent to associate with this upload
+     * @param metadata Optional additional metadata to associate with the file
+     *
+     * @returns Promise resolving to the API response data
+     *
+     * @example Browser usage:
+     * ```typescript
+     * // In a Vue.js or React component
+     * const fileInput = document.getElementById('fileInput');
+     * const file = fileInput.files[0];
+     * const response = await rabbitHoleEndpoint.postFile(file);
+     * ```
+     *
+     * @example Node.js usage:
+     * ```typescript
+     * // In a Node.js application
+     * const response = await rabbitHoleEndpoint.postFile('/path/to/document.pdf');
+     * ```
      */
     async postFile(
-        filePath: string,
+        fileSource: FileSource,
         fileName?: string | null,
         chunkSize?: number | null,
         chunkOverlap?: number | null,
@@ -32,49 +114,57 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
         metadata?: Record<string, any> | null,
     ): Promise<any> {
         const form = new FormData();
-        const finalFileName = fileName || path.basename(filePath);
 
-        const fileBuffer = readFileSync(filePath);
-        form.append("file", fileBuffer, {
-            filename: finalFileName,
-            contentType: mime.contentType(finalFileName) || "application/octet-stream"
-        });
+        try {
+            await this.appendFileToForm(form, fileSource, "file", fileName);
+            this.appendQueryDataToForm(form, chunkSize, chunkOverlap, metadata);
 
-        if (chunkSize) {
-            form.append("chunk_size", chunkSize.toString());
+            // Send the request
+            return await this.submitForm(form, this.prefix, agentId);
+        } catch (error) {
+            this.throwError(fileSource, error)
         }
-        if (chunkOverlap) {
-            form.append("chunk_overlap", chunkOverlap.toString());
-        }
-        if (metadata) {
-            form.append("metadata", JSON.stringify(metadata));
-        }
-        const response = await this.getHttpClient(agentId).post(this.prefix, form, {
-            headers: {
-                ...form.getHeaders(),
-                'Content-Type': `multipart/form-data; boundary=${form.getBoundary()}`
-            },
-        });
-
-        return response.data;
     }
 
     /**
      * This method posts a number of files to the RabbitHole API. The files are uploaded to the RabbitHole server and
-     * ingested into the RAG system. The files are then processed by the RAG system and the results are stored in the
-     * RAG database. The files are processed in a batch. The process is asynchronous.
-     * The CheshireCat processes the injection in background and the client will be informed at the end of the process.
+     * ingested into the RAG system.
      *
-     * @param filePaths The paths to the files to be uploaded.
-     * @param chunkSize The size of the chunks to be used for the upload. If not provided, the default chunk size will be used.
-     * @param chunkOverlap The size of the overlap between chunks. If not provided, the default overlap size will be used.
-     * @param agentId The ID of the agent to be used for the upload. If not provided, the default agent will be used.
-     * @param metadata Additional metadata to be associated with the files.
+     * This method works in both Node.js and browser environments:
+     * - In Node.js: Pass an array of file path strings as `fileSource`
+     * - In browser: Pass an array of File objects as `fileSource`
      *
-     * @returns The response from the RabbitHole API.
+     * The files are then processed by the RAG system, and the results are stored in the RAG database. The files are
+     * processed in a batch. The process is asynchronous.
+     * The CheshireCat processes the injection in the background, and the client will be informed at the end of the
+     * process.
+     *
+     * @param fileSources The sources of the file to upload:
+     *                  - In Node.js: An array of strings path to the file
+     *                  - In browser: An array of File objects
+     * @param chunkSize Optional size of chunks for RAG processing
+     * @param chunkOverlap Optional overlap between chunks
+     * @param agentId Optional ID of the agent to associate with this upload
+     * @param metadata Optional additional metadata to associate with the file
+     *
+     * @returns Promise resolving to the API response data
+     *
+     * @example Browser usage:
+     * ```typescript
+     * // In a Vue.js or React component
+     * const fileInputs = document.getElementById('fileInput');
+     * const files = fileInputs.files;
+     * const response = await rabbitHoleEndpoint.postFiles(files);
+     * ```
+     *
+     * @example Node.js usage:
+     * ```typescript
+     * // In a Node.js application
+     * const response = await rabbitHoleEndpoint.postFiles(['/path/to/first/document.pdf', '/path/to/second/document.pdf']);
+     * ```
      */
     async postFiles(
-        filePaths: string[],
+        fileSources: FileSource[],
         chunkSize?: number | null,
         chunkOverlap?: number | null,
         agentId?: string | null,
@@ -82,27 +172,18 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
     ): Promise<any> {
         const form = new FormData();
 
-        filePaths.forEach((filePath) => {
-            const fileName = path.basename(filePath);
-            const fileBuffer = readFileSync(filePath);
-            form.append("files", fileBuffer, {
-                filename: fileName,
-                contentType: mime.contentType(fileName) || "application/octet-stream"
-            });
-        });
+        try {
+            await Promise.all(fileSources.map(async (fileSource) => {
+                await this.appendFileToForm(form, fileSource, "files");
+            }));
 
-        if (chunkSize) {
-            form.append("chunk_size", chunkSize.toString());
-        }
-        if (chunkOverlap) {
-            form.append("chunk_overlap", chunkOverlap.toString());
-        }
-        if (metadata) {
-            form.append("metadata", JSON.stringify(metadata));
-        }
-        const response = await this.getHttpClient(agentId).post(this.formatUrl("/batch"), form);
+            // Append additional query parameters
+            this.appendQueryDataToForm(form, chunkSize, chunkOverlap, metadata);
 
-        return response.data;
+            return await this.submitForm(form, this.formatUrl("/batch"), agentId);
+        } catch (error) {
+            this.throwError(fileSources[0], error)
+        }
     }
 
     /**
@@ -146,36 +227,45 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
      * This method posts a memory point, either for the agent identified by the agentId parameter (for multi-agent
      * installations) or for the default agent (for single-agent installations). The memory point is ingested into the
      * RAG system. The process is asynchronous. The provided file must be in JSON format.
-     * The CheshireCat processes the injection in background and the client will be informed at the end of the process.
+     * The CheshireCat processes the injection in the background, and the client will be informed at the end of the
+     * process.
      *
-     * @param filePath The path to the file to be uploaded.
+     * @param fileSource The source of the file to upload:
+     *                  - In Node.js: A string path to the file
+     *                  - In browser: A File object
      * @param fileName The name of the file to be uploaded. If not provided, the name of the file will be used.
      * @param agentId The ID of the agent to be used for the upload. If not provided, the default agent will be used.
      *
      * @returns The response from the RabbitHole API.
+     *
+     * @example Browser usage:
+     * ```typescript
+     * // In a Vue.js or React component
+     * const fileInput = document.getElementById('fileInput');
+     * const file = fileInput.files[0];
+     * const response = await rabbitHoleEndpoint.postMemory(file);
+     * ```
+     *
+     * @example Node.js usage:
+     * ```typescript
+     * // In a Node.js application
+     * const response = await rabbitHoleEndpoint.postMemory('/path/to/document.json');
+     * ```
      */
     async postMemory(
-        filePath: string,
+        fileSource: FileSource,
         fileName?: string | null,
         agentId?: string | null,
     ): Promise<any> {
         const form = new FormData();
-        const finalFileName = fileName || path.basename(filePath);
 
-        const fileBuffer = readFileSync(filePath);
-        form.append("file", fileBuffer, {
-            filename: finalFileName,
-            contentType: mime.contentType(finalFileName) || "application/octet-stream"
-        });
+        try {
+            await this.appendFileToForm(form, fileSource, "file", fileName);
 
-        const response = await this.getHttpClient(agentId).post(this.formatUrl("/memory"), form, {
-            headers: {
-                ...form.getHeaders(),
-                'Content-Type': `multipart/form-data; boundary=${form.getBoundary()}`
-            },
-        });
-
-        return response.data;
+            return this.submitForm(form, this.formatUrl("/memory"), agentId);
+        } catch (error) {
+            this.throwError(fileSource, error)
+        }
     }
 
     /**
