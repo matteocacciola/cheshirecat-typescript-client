@@ -7,9 +7,8 @@
  */
 import {AbstractEndpoint} from "./abstract";
 import FormData from "form-data";
-import * as mime from "mime-types";
 import {isNodeEnvironment } from "../utils/environment";
-import {FileSource, readFile, getFileName} from "../utils/file-reader";
+import {FileSource, readFile, getFileName, getFileMimeType} from "../utils/file-reader";
 import {AllowedMimeTypesOutput} from "../models/api/rabbitholes";
 
 export class RabbitHoleEndpoint extends AbstractEndpoint {
@@ -33,10 +32,11 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
 
         // Get appropriate filename
         const finalFileName = fileName || await getFileName(fileSource);
+        const fileMimeType = await getFileMimeType(fileSource, finalFileName);
 
         form.append(formKey, fileBuffer, {
             filename: finalFileName,
-            contentType: mime.contentType(finalFileName) || "application/octet-stream"
+            contentType: fileMimeType
         });
     }
 

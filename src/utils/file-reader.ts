@@ -4,7 +4,7 @@
  * Isomorphic (Node.js and browser) utilities for file operations.
  */
 
-import { isNodeEnvironment } from './environment';
+import { isNodeEnvironment } from "./environment";
 
 /**
  * Type representing the source of a file, which differs by environment:
@@ -24,28 +24,28 @@ export type FileSource = string | File | Blob;
  *         file source type for the current environment
  */
 export async function readFile(fileSource: FileSource): Promise<Buffer | Blob> {
+    // Node.js environment
     if (isNodeEnvironment()) {
-        // Node.js environment
-        if (typeof fileSource !== 'string') {
-            throw new Error('In Node.js environment, fileSource must be a file path string');
+        if (typeof fileSource !== "string") {
+            throw new Error("In Node.js environment, fileSource must be a file path string");
         }
 
         try {
             // Dynamic import to avoid bundling issues in browser
-            const fs = await import('fs');
+            const fs = await import("fs");
             return fs.readFileSync(fileSource);
         } catch (error: any) {
             throw new Error(`Failed to read file at path ${fileSource}: ${error.message}`);
         }
-    } else {
-        // Browser environment
-        if (typeof fileSource === 'string') {
-            throw new Error('In browser environment, fileSource must be a File or Blob object, not a path string');
-        }
-
-        // File or Blob are already the data we need
-        return fileSource;
     }
+
+    // Browser environment
+    if (typeof fileSource === "string") {
+        throw new Error("In browser environment, fileSource must be a File or Blob object, not a path string");
+    }
+
+    // File or Blob are already the data we need
+    return fileSource;
 }
 
 /**
@@ -55,23 +55,41 @@ export async function readFile(fileSource: FileSource): Promise<Buffer | Blob> {
  * @returns Promise resolving to the filename
  */
 export async function getFileName(fileSource: FileSource): Promise<string> {
+    // In Node.js, extract the basename from the path
     if (isNodeEnvironment()) {
-        // In Node.js, extract the basename from the path
-        if (typeof fileSource !== 'string') {
-            throw new Error('Expected file path string in Node.js environment');
+        if (typeof fileSource !== "string") {
+            throw new Error("Expected file path string in Node.js environment");
         }
 
-        const path = await import('path');
+        const path = await import("path");
         return path.basename(fileSource);
-    } else {
-        // In browser, use the name property of the File object
-        if (fileSource instanceof File) {
-            return fileSource.name;
-        } else if (fileSource instanceof Blob) {
-            // For generic blobs, generate a name
-            return `blob-${Date.now()}.bin`;
-        } else {
-            throw new Error('Expected File or Blob in browser environment');
-        }
     }
+
+    // In browser, use the name property of the File object
+    if (fileSource instanceof File) {
+        return fileSource.name;
+    }
+    if (fileSource instanceof Blob) {
+        // For generic blobs, generate a name
+        return `blob-${Date.now()}.bin`;
+    }
+    throw new Error("Expected File or Blob in browser environment");
+}
+
+export async function getFileMimeType(fileSource: FileSource, fileName: string): Promise<string> {
+    // In Node.js, use the mime module to get the MIME type
+    if (isNodeEnvironment()) {
+        if (typeof fileSource !== "string") {
+            throw new Error("Expected file path string in Node.js environment");
+        }
+
+        const { contentType } = await import("mime-types");
+        return contentType(fileName) || "application/octet-stream";
+    }
+
+    // In browser, use the type property of the File object
+    if (fileSource instanceof File || fileSource instanceof Blob) {
+        return fileSource.type || "application/octet-stream";
+    }
+    throw new Error("Expected File or Blob in browser environment");
 }
