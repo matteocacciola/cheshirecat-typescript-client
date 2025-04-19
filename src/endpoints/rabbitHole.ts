@@ -1,4 +1,4 @@
-import * as fs from "fs";
+import {readFileSync} from "fs";
 import * as path from "path";
 import FormData from "form-data";
 import * as mime from 'mime-types';
@@ -34,7 +34,7 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
         const form = new FormData();
         const finalFileName = fileName || path.basename(filePath);
 
-        const fileBuffer = fs.readFileSync(filePath);
+        const fileBuffer = readFileSync(filePath);
         form.append("file", fileBuffer, {
             filename: finalFileName,
             contentType: mime.contentType(finalFileName) || "application/octet-stream"
@@ -84,7 +84,7 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
 
         filePaths.forEach((filePath) => {
             const fileName = path.basename(filePath);
-            const fileBuffer = fs.readFileSync(filePath);
+            const fileBuffer = readFileSync(filePath);
             form.append("files", fileBuffer, {
                 filename: fileName,
                 contentType: mime.contentType(fileName) || "application/octet-stream"
@@ -162,7 +162,7 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
         const form = new FormData();
         const finalFileName = fileName || path.basename(filePath);
 
-        const fileBuffer = fs.readFileSync(filePath);
+        const fileBuffer = readFileSync(filePath);
         form.append("file", fileBuffer, {
             filename: finalFileName,
             contentType: mime.contentType(finalFileName) || "application/octet-stream"
