@@ -7,8 +7,9 @@
  */
 import {AbstractEndpoint} from "./abstract";
 import FormData from "form-data";
-import {isNodeEnvironment } from "../utils/environment";
+import {isNodeEnvironment} from "../utils/environment";
 import {FileSource, readFile, getFileName, getFileMimeType} from "../utils/file-reader";
+import {createFormData, getFormDataHeaders} from "../utils/form-data";
 import {AllowedMimeTypesOutput} from "../models/api/rabbitholes";
 
 export class RabbitHoleEndpoint extends AbstractEndpoint {
@@ -26,7 +27,12 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
         throw error;
     }
 
-    private async appendFileToForm(form: FormData, fileSource: FileSource, formKey: string, fileName?: string | null) {
+    private async appendFileToForm(
+        form: FormData | globalThis.FormData,
+        fileSource: FileSource,
+        formKey: string,
+        fileName?: string | null
+    ) {
         // Read file content in an environment-appropriate way
         const fileBuffer = await readFile(fileSource);
 
@@ -34,14 +40,21 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
         const finalFileName = fileName || await getFileName(fileSource);
         const fileMimeType = await getFileMimeType(fileSource, finalFileName);
 
-        form.append(formKey, fileBuffer, {
-            filename: finalFileName,
-            contentType: fileMimeType
-        });
+        if (isNodeEnvironment()) {
+            (form as FormData).append(formKey, fileBuffer, {
+                filename: finalFileName,
+                contentType: fileMimeType
+            });
+
+            return;
+        }
+
+        const blob = new Blob([fileBuffer], { type: fileMimeType });
+        (form as globalThis.FormData).append(formKey, blob, finalFileName);
     }
 
     private appendQueryDataToForm(
-        form: FormData,
+        form: FormData | globalThis.FormData,
         chunkSize?: number | null,
         chunkOverlap?: number | null,
         metadata?: Record<string, any> | null
@@ -57,12 +70,13 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
         }
     }
 
-    private async submitForm(form: FormData, url: string, agentId?: string | null) {
+    private async submitForm(form: FormData | globalThis.FormData, url: string, agentId?: string | null) {
+        const headers = isNodeEnvironment()
+            ? { ...(form as FormData).getHeaders() }
+            : {};
+
         const response = await this.getHttpClient(agentId).post(url, form, {
-            headers: {
-                ...form.getHeaders(),
-                "Content-Type": `multipart/form-data; boundary=${form.getBoundary()}`
-            }
+            headers
         });
 
         return response.data;
@@ -113,7 +127,7 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
         agentId?: string | null,
         metadata?: Record<string, any> | null,
     ): Promise<any> {
-        const form = new FormData();
+        const form = createFormData();
 
         try {
             await this.appendFileToForm(form, fileSource, "file", fileName);
