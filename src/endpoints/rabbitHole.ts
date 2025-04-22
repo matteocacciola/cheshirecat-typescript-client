@@ -55,16 +55,8 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
 
     private appendQueryDataToForm(
         form: FormData | globalThis.FormData,
-        chunkSize?: number | null,
-        chunkOverlap?: number | null,
         metadata?: Record<string, any> | null
     ) {
-        if (chunkSize) {
-            form.append("chunk_size", chunkSize.toString());
-        }
-        if (chunkOverlap) {
-            form.append("chunk_overlap", chunkOverlap.toString());
-        }
         if (metadata) {
             form.append("metadata", JSON.stringify(metadata));
         }
@@ -90,7 +82,8 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
      * - In browser: Pass a File object as `fileSource`
      *
      * The file is uploaded to the RabbitHole server and processed asynchronously.
-     * The CheshireCat processes the injection in background, and the client will be informed when processing completes.
+     * The CheshireCat processes the injection in the background, and the client will be informed when processing
+     * completes.
      *
      * @param fileSource The source of the file to upload:
      *                  - In Node.js: A string path to the file
@@ -98,8 +91,6 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
      * @param fileName Optional custom name for the file. If not provided:
      *                - In Node.js: The basename of the file path is used
      *                - In browser: The name property of the File object is used
-     * @param chunkSize Optional size of chunks for RAG processing
-     * @param chunkOverlap Optional overlap between chunks
      * @param agentId Optional ID of the agent to associate with this upload
      * @param metadata Optional additional metadata to associate with the file
      *
@@ -122,8 +113,6 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
     async postFile(
         fileSource: FileSource,
         fileName?: string | null,
-        chunkSize?: number | null,
-        chunkOverlap?: number | null,
         agentId?: string | null,
         metadata?: Record<string, any> | null,
     ): Promise<any> {
@@ -131,7 +120,7 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
 
         try {
             await this.appendFileToForm(form, fileSource, "file", fileName);
-            this.appendQueryDataToForm(form, chunkSize, chunkOverlap, metadata);
+            this.appendQueryDataToForm(form, metadata);
 
             // Send the request
             return await this.submitForm(form, this.prefix, agentId);
@@ -156,8 +145,6 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
      * @param fileSources The sources of the file to upload:
      *                  - In Node.js: An array of strings path to the file
      *                  - In browser: An array of File objects
-     * @param chunkSize Optional size of chunks for RAG processing
-     * @param chunkOverlap Optional overlap between chunks
      * @param agentId Optional ID of the agent to associate with this upload
      * @param metadata Optional additional metadata to associate with the file
      *
@@ -179,8 +166,6 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
      */
     async postFiles(
         fileSources: FileSource[],
-        chunkSize?: number | null,
-        chunkOverlap?: number | null,
         agentId?: string | null,
         metadata?: Record<string, any> | null,
     ): Promise<any> {
@@ -192,7 +177,7 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
             }));
 
             // Append additional query parameters
-            this.appendQueryDataToForm(form, chunkSize, chunkOverlap, metadata);
+            this.appendQueryDataToForm(form, metadata);
 
             return await this.submitForm(form, this.formatUrl("/batch"), agentId);
         } catch (error) {
@@ -202,13 +187,12 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
 
     /**
      * This method posts a web URL to the RabbitHole API. The web URL is ingested into the RAG system. The web URL is
-     * processed by the RAG system by Web scraping and the results are stored in the RAG database. The process is
+     * processed by the RAG system by Web scraping, and the results are stored in the RAG database. The process is
      * asynchronous.
-     * The CheshireCat processes the injection in background and the client will be informed at the end of the process.
+     * The CheshireCat processes the injection in the background, and the client will be informed at the end of the
+     * process.
      *
      * @param webUrl The URL of the web page to be ingested.
-     * @param chunkSize The size of the chunks to be used for the upload. If not provided, the default chunk size will be used.
-     * @param chunkOverlap The size of the overlap between chunks. If not provided, the default overlap size will be used.
      * @param agentId The ID of the agent to be used for the upload. If not provided, the default agent will be used.
      * @param metadata Additional metadata to be associated with the web URL.
      *
@@ -216,19 +200,10 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
      */
     async postWeb(
         webUrl: string,
-        chunkSize?: number | null,
-        chunkOverlap?: number | null,
         agentId?: string | null,
         metadata?: Record<string, any> | null,
     ): Promise<any> {
         const payload: Record<string, any> = { url: webUrl };
-
-        if (chunkSize) {
-            payload["chunk_size"] = chunkSize;
-        }
-        if (chunkOverlap) {
-            payload["chunk_overlap"] = chunkOverlap;
-        }
         if (metadata) {
             payload["metadata"] = metadata;
         }

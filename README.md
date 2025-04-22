@@ -53,10 +53,10 @@ const result = cheshireCatClient.message().sendWebsocketMessage(
 Load data to the rabbit hole:
 ```javascript
 //file
-const result = await cheshireCatClient.rabbitHole().postFile(file, null, null);
+const result = await cheshireCatClient.rabbitHole().postFile(file);
 
 //url
-const result = await cheshireCatClient.rabbitHole().postWeb(url, null,null);
+const result = await cheshireCatClient.rabbitHole().postWeb(url);
 ```
 
 Memory management utilities:
