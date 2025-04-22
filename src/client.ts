@@ -6,6 +6,7 @@ import {camelToSnakeCase} from "./helpers";
 import {Endpoints} from "./endpoints/types";
 import {AdminsEndpoint} from "./endpoints/admins";
 import {AuthHandlerEndpoint} from "./endpoints/authHandler";
+import {ChunkerEndpoint} from "./endpoints/chunker";
 import {EmbedderEndpoint} from "./endpoints/embedder";
 import {LargeLanguageModelEndpoint} from "./endpoints/largeLanguageModel";
 import {MessageEndpoint} from "./endpoints/message";
@@ -60,6 +61,10 @@ export class CheshireCatClient implements Endpoints {
 
     public authHandler(): AuthHandlerEndpoint {
         return new AuthHandlerEndpoint(this);
+    }
+
+    public chunker(): ChunkerEndpoint {
+        return new ChunkerEndpoint(this);
     }
 
     public embedder(): EmbedderEndpoint {
