@@ -7,6 +7,7 @@ import {Endpoints} from "./endpoints/types";
 import {AdminsEndpoint} from "./endpoints/admins";
 import {AuthHandlerEndpoint} from "./endpoints/authHandler";
 import {ChunkerEndpoint} from "./endpoints/chunker";
+import {CustomEndpoint} from "./endpoints/customEndpoint";
 import {EmbedderEndpoint} from "./endpoints/embedder";
 import {LargeLanguageModelEndpoint} from "./endpoints/largeLanguageModel";
 import {MessageEndpoint} from "./endpoints/message";
@@ -101,6 +102,10 @@ export class CheshireCatClient implements Endpoints {
 
     public users(): UsersEndpoint {
         return new UsersEndpoint(this);
+    }
+
+    public custom(): CustomEndpoint {
+        return new CustomEndpoint(this);
     }
 
     /**

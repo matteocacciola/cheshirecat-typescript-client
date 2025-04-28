@@ -52,8 +52,18 @@ export abstract class AbstractEndpoint {
         return this.deserialize<T>(response.data);
     }
 
-    protected async put<T>(endpoint: string, payload: any, agentId?: string | null, userId?: string | null): Promise<T> {
-        const response = await this.getHttpClient(agentId, userId).put(endpoint, {json: payload});
+    protected async put<T>(
+        endpoint: string,
+        payload?: any,
+        agentId?: string | null,
+        userId?: string | null
+    ): Promise<T> {
+        const options: any = {};
+        if (payload) {
+            options.json = payload;
+        }
+
+        const response = await this.getHttpClient(agentId, userId).put(endpoint, options);
         return this.deserialize<T>(response.data);
     }
 
