@@ -1,5 +1,6 @@
 import {AbstractEndpoint} from "./abstract";
 import {FactoryObjectSettingsOutput} from "../models/api/factories";
+import {FileManagerAttributes} from "../models/api/fileManager";
 
 export class FileManagerEndpoint extends AbstractEndpoint {
     protected prefix = '/file_manager';
@@ -54,6 +55,13 @@ export class FileManagerEndpoint extends AbstractEndpoint {
         return this.put<FactoryObjectSettingsOutput>(
             this.formatUrl(`/settings/${fileManager}`),
             values,
+            agentId
+        );
+    }
+
+    async getFileManagerAttributes(agentId?: string | null): Promise<FileManagerAttributes> {
+        return this.get<FileManagerAttributes>(
+            this.formatUrl("/"),
             agentId
         );
     }
