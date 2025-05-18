@@ -4,8 +4,8 @@ export class CustomEndpoint extends AbstractEndpoint {
     /**
      * This method is used to trigger a custom endpoint with a GET method
      */
-    async getCustom(url: string, agentId: string, userId?: string | null): Promise<any> {
-        return this.get<any>(url, agentId, userId);
+    async getCustom(url: string, agentId: string, userId?: string | null, query?: any): Promise<any> {
+        return this.get<any>(url, agentId, userId, query);
     }
 
     /**
