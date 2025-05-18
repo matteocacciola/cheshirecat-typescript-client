@@ -217,7 +217,7 @@ export class MemoryEndpoint extends AbstractEndpoint {
     }
 
     /**
-     * This endpoint deletes a memory point, either for the agent identified by the agentId parameter.
+     * This endpoint deletes a memory point, for the agent identified by the agentId parameter.
      *
      * @param collection The collection to retrieve the memory point from.
      * @param pointId The ID of the memory point to retrieve.
