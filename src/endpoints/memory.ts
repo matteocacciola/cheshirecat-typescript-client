@@ -21,43 +21,43 @@ export class MemoryEndpoint extends AbstractEndpoint {
     // -- Memory Collections API
 
     /**
-     * This endpoint returns the collections of memory points, either for the agent identified by the agentId parameter
-     * (for multi-agent installations) or for the default agent (for single-agent installations).
+     * This endpoint returns the collections of memory points.
      *
-     * @param agentId The agent ID for multi-agent installations.
+     * @param agentId The agent ID
      *
      * @returns The collections of memory points.
      */
-    async getMemoryCollections(agentId?: string | null): Promise<CollectionsOutput> {
+    async getMemoryCollections(agentId: string): Promise<CollectionsOutput> {
         return this.get(this.formatUrl("/collections"), agentId);
     }
 
     /**
-     * This endpoint deletes the all the points in all the collections of memory, either for the agent identified by
-     * the agentId parameter (for multi-agent installations) or for the default agent (for single-agent installations).
+     * This endpoint deletes all the points in all the collections of memory.
      *
-     * @param agentId The agent ID for multi-agent installations.
+     * @param agentId The agent ID.
      *
      * @returns The output of the deletion operation.
      */
-    async deleteAllMemoryCollectionPoints(agentId?: string | null): Promise<CollectionPointsDestroyOutput> {
+    async deleteAllMemoryCollectionPoints(agentId: string): Promise<CollectionPointsDestroyOutput> {
         return this.delete<CollectionPointsDestroyOutput>(this.formatUrl("/collections"), agentId);
     }
 
     /**
-     * This method deletes all the points in a single collection of memory, either for the agent identified by the
-     * agentId parameter (for multi-agent installations) or for the default agent (for single-agent installations).
+     * This method deletes all the points in a single collection of memory.
      *
      * @param collection The collection to delete the points from.
-     * @param agentId The agent ID for multi-agent installations.
+     * @param agentId The agent ID.
      *
      * @returns The output of the deletion operation.
      */
     async deleteAllSingleMemoryCollectionPoints(
         collection: Collection,
-        agentId?: string | null
+        agentId: string,
     ): Promise<CollectionPointsDestroyOutput> {
-        return this.delete<CollectionPointsDestroyOutput>(this.formatUrl("/collections/" + collection.toString()), agentId);
+        return this.delete<CollectionPointsDestroyOutput>(
+            this.formatUrl("/collections/" + collection.toString()),
+            agentId,
+        );
     }
 
     // END Memory Collections API --
@@ -65,60 +65,58 @@ export class MemoryEndpoint extends AbstractEndpoint {
     // -- Memory Conversation History API
 
     /**
-     * This endpoint returns the conversation history, either for the agent identified by the agentId parameter
-     * (for multi-agent installations) or for the default agent (for single-agent installations). If the userId
-     * parameter is provided, the conversation history is filtered by the user ID.
+     * This endpoint returns the conversation history.
      *
-     * @param agentId The agent ID for multi-agent installations.
+     * @param agentId The agent ID.
      * @param userId The user ID to filter the conversation history by.
      *
      * @returns The conversation history.
      */
     async getConversationHistory(
-        agentId?: string | null,
-        userId?: string | null
+        agentId: string,
+        userId: string,
     ): Promise<ConversationHistoryOutput> {
         return this.get<ConversationHistoryOutput>(this.formatUrl("/conversation_history"), agentId, userId);
     }
 
     /**
-     * This endpoint deletes the conversation history, either for the agent identified by the agentId parameter
-     * (for multi-agent installations) or for the default agent (for single-agent installations). If the userId
-     * parameter is provided, the conversation history is filtered by the user ID.
+     * This endpoint deletes the conversation history.
      *
-     * @param agentId The agent ID for multi-agent installations.
+     * @param agentId The agent ID.
      * @param userId The user ID to filter the conversation history by.
      *
      * @returns The output of the deletion operation.
      */
     async deleteConversationHistory(
-        agentId?: string | null,
-        userId?: string | null
+        agentId: string,
+        userId: string,
     ): Promise<ConversationHistoryDeleteOutput> {
-        return this.delete<ConversationHistoryDeleteOutput>(this.formatUrl("/conversation_history"), agentId, userId);
+        return this.delete<ConversationHistoryDeleteOutput>(
+            this.formatUrl("/conversation_history"),
+            agentId,
+            userId,
+        );
     }
 
     /**
-     * This endpoint creates a new element in the conversation history, either for the agent identified by the agentId
-     * parameter (for multi-agent installations) or for the default agent (for single-agent installations). If the
-     * userId parameter is provided, the conversation history is added to the user ID.
+     * This endpoint creates a new element in the conversation history.
      *
      * @param who The speaker of the conversation history.
      * @param text The text of the conversation history.
+     * @param agentId The agent ID.
+     * @param userId The user ID to add the conversation history to.
      * @param image The image of the conversation history.
      * @param why The reason for the conversation history.
-     * @param agentId The agent ID for multi-agent installations.
-     * @param userId The user ID to add the conversation history to.
      *
      * @returns The conversation history.
      */
     async postConversationHistory(
         who: Role,
         text: string,
+        agentId: string,
+        userId: string,
         image?: string | null,
         why?: Why | null,
-        agentId?: string | null,
-        userId?: string | null,
     ): Promise<ConversationHistoryOutput> {
         const payload = {
             who: who.toString(),
@@ -127,7 +125,7 @@ export class MemoryEndpoint extends AbstractEndpoint {
             ...(why && {why: why.toArray()}),
         };
 
-        return this.post<ConversationHistoryOutput>(this.formatUrl("/conversation_history"), payload, agentId, userId);
+        return this.post<ConversationHistoryOutput>(this.formatUrl("/conversation_history"), agentId, payload, userId);
     }
 
     // END Memory Conversation History API --
@@ -135,26 +133,23 @@ export class MemoryEndpoint extends AbstractEndpoint {
     // -- Memory Points API
 
     /**
-     * This endpoint retrieves memory points based on the input text, either for the agent identified by the agentId
-     * parameter (for multi-agent installations) or for the default agent (for single-agent installations). The text
-     * parameter is the input text for which the memory points are retrieved. The k parameter is the number of memory
-     * points to retrieve.
-     * If the userId parameter is provided, the memory points are filtered by the user ID.
+     * This endpoint retrieves memory points based on the input text. The text parameter is the input text for which the
+     * memory points are retrieved. The k parameter is the number of memory points to retrieve.
      *
      * @param text The input text for which the memory points are retrieved.
+     * @param agentId The agent ID.
+     * @param userId The user ID to filter the memory points by.
      * @param k The number of memory points to retrieve.
      * @param metadata The metadata to filter the memory points by.
-     * @param agentId The agent ID for multi-agent installations.
-     * @param userId The user ID to filter the memory points by.
      *
      * @returns The memory recall output.
      */
     async getMemoryRecall(
         text: string,
+        agentId: string,
+        userId: string,
         k?: number | null,
         metadata?: any,
-        agentId?: string | null,
-        userId?: string | null,
     ): Promise<MemoryRecallOutput> {
         const query = {
             text,
@@ -166,90 +161,95 @@ export class MemoryEndpoint extends AbstractEndpoint {
     }
 
     /**
-     * This method posts a memory point, either for the agent identified by the agentId parameter (for multi-agent
-     * installations) or for the default agent (for single-agent installations).
-     * If the userId parameter is provided, the memory point is associated with the user ID.
+     * This method posts a memory point.
      *
      * @param collection The collection to post the memory point to.
-     * @param memoryPoint The memory point to post.
-     * @param agentId The agent ID for multi-agent installations.
+     * @param agentId The agent ID.
      * @param userId The user ID to associate the memory point with.
+     * @param memoryPoint The memory point to post.
      *
      * @returns The memory point output.
      */
     async postMemoryPoint(
         collection: Collection,
+        agentId: string,
+        userId: string,
         memoryPoint: MemoryPointOutput,
-        agentId?: string | null,
-        userId?: string | null,
     ): Promise<MemoryPointOutput> {
         if (userId && !memoryPoint.metadata["source"]) {
             memoryPoint.metadata["source"] = userId;
         }
 
-        return this.post<MemoryPointOutput>(this.formatUrl("/collections/" + collection.toString() + "/points"), memoryPoint, agentId);
+        return this.post<MemoryPointOutput>(
+            this.formatUrl("/collections/" + collection.toString() + "/points"),
+            agentId,
+            memoryPoint,
+        );
     }
 
     /**
-     * This method puts a memory point, either for the agent identified by the agentId parameter (for multi-agent
-     * installations) or for the default agent (for single-agent installations).
-     * If the userId parameter is provided, the memory point is associated with the user ID.
+     * This method puts a memory point.
      *
      * @param collection The collection to put the memory point to.
+     * @param agentId The agent ID.
+     * @param userId The user ID to associate the memory point with.
      * @param memoryPoint The memory point to put.
      * @param pointId The ID of the memory point to put.
-     * @param agentId The agent ID for multi-agent installations.
-     * @param userId The user ID to associate the memory point with.
      *
      * @returns The memory point output.
      */
     async putMemoryPoint(
         collection: Collection,
+        agentId: string,
+        userId: string,
         memoryPoint: MemoryPointOutput,
         pointId: string,
-        agentId?: string | null,
-        userId?: string | null,
     ): Promise<MemoryPointOutput> {
         if (userId && !memoryPoint.metadata["source"]) {
             memoryPoint.metadata["source"] = userId;
         }
 
-        return this.put<MemoryPointOutput>(this.formatUrl("/collections/" + collection.toString() + "/points/" + pointId), memoryPoint, agentId);
+        return this.put<MemoryPointOutput>(
+            this.formatUrl("/collections/" + collection.toString() + "/points/" + pointId),
+            agentId,
+            memoryPoint,
+        );
     }
 
     /**
-     * This endpoint deletes a memory point, either for the agent identified by the agentId parameter (for multi-agent
-     * installations) or for the default agent (for single-agent installations).
+     * This endpoint deletes a memory point, either for the agent identified by the agentId parameter.
      *
      * @param collection The collection to retrieve the memory point from.
      * @param pointId The ID of the memory point to retrieve.
-     * @param agentId The agent ID for multi-agent installations.
+     * @param agentId The agent ID.
      *
      * @returns The memory point output.
      */
     async deleteMemoryPoint(
         collection: Collection,
         pointId: string,
-        agentId?: string | null
+        agentId: string,
     ): Promise<MemoryPointDeleteOutput> {
-        return this.delete<MemoryPointDeleteOutput>(this.formatUrl("/collections/" + collection.toString() + "/points/" + pointId), agentId);
+        return this.delete<MemoryPointDeleteOutput>(
+            this.formatUrl("/collections/" + collection.toString() + "/points/" + pointId),
+            agentId,
+        );
     }
 
     /**
-     * This endpoint deletes memory points based on the metadata, either for the agent identified by the agentId
-     * parameter (for multi-agent installations) or for the default agent (for single-agent installations). The metadata
-     * parameter is a dictionary of key-value pairs that the memory points must match.
+     * This endpoint deletes memory points based on the metadata. The metadata parameter is a dictionary of key-value
+     * pairs that the memory points must match.
      *
      * @param collection The collection to retrieve the memory points from.
+     * @param agentId The agent ID.
      * @param metadata The metadata to filter the memory points by.
-     * @param agentId The agent ID for multi-agent installations.
      *
      * @returns The output of the deletion operation.
      */
     async deleteMemoryPointsByMetadata(
         collection: Collection,
+        agentId: string,
         metadata?: any,
-        agentId?: string | null,
     ): Promise<MemoryPointsDeleteByMetadataOutput> {
         return this.delete<MemoryPointsDeleteByMetadataOutput>(
             this.formatUrl("/collections/" + collection.toString() + "/points"),
@@ -260,29 +260,33 @@ export class MemoryEndpoint extends AbstractEndpoint {
     }
 
     /**
-     * This endpoint retrieves memory points, either for the agent identified by the agentId parameter (for multi-agent
-     * installations) or for the default agent (for single-agent installations). The limit parameter is the maximum
-     * number of memory points to retrieve. The offset parameter is the number of memory points to skip.
+     * This endpoint retrieves memory points. The limit parameter is the maximum number of memory points to retrieve.
+     * The offset parameter is the number of memory points to skip.
      *
      * @param collection The collection to retrieve the memory points from.
+     * @param agentId The agent ID.
      * @param limit The maximum number of memory points to retrieve.
      * @param offset The number of memory points to skip.
-     * @param agentId The agent ID for multi-agent installations.
      *
      * @returns The memory points output.
      */
     async getMemoryPoints(
         collection: Collection,
+        agentId: string,
         limit?: number | null,
         offset?: number | null,
-        agentId?: string | null,
     ): Promise<MemoryPointsOutput> {
         const query = {
             ...(limit && {limit}),
             ...(offset && {offset}),
         };
 
-        return this.get<MemoryPointsOutput>(this.formatUrl("/collections/" + collection.toString() + "/points"), agentId, null, query);
+        return this.get<MemoryPointsOutput>(
+            this.formatUrl("/collections/" + collection.toString() + "/points"),
+            agentId,
+            null,
+            query,
+        );
     }
 
     // END Memory Points API --

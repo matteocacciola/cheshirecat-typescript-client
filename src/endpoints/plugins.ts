@@ -6,65 +6,60 @@ export class PluginsEndpoint extends AbstractEndpoint {
     protected prefix = "/plugins";
 
     /**
-     * This endpoint returns the available plugins, either for the agent identified by the agentId parameter
-     * (for multi-agent installations) or for the default agent (for single-agent installations).
+     * This endpoint returns the available plugins.
      *
-     * @param pluginName - The name of the plugin to filter the results by (optional).
      * @param agentId - The ID of the agent to get the available plugins for.
+     * @param pluginName - The name of the plugin to filter the results by (optional).
      *
      * @returns The available plugins.
      */
-    async getAvailablePlugins(pluginName?: string | null, agentId?: string | null): Promise<PluginCollectionOutput> {
+    async getAvailablePlugins(agentId: string, pluginName?: string | null): Promise<PluginCollectionOutput> {
         return this.get<PluginCollectionOutput>(
             this.prefix,
             agentId,
             null,
-            pluginName ? {query: pluginName} : {}
+            pluginName ? {query: pluginName} : {},
         );
     }
 
     /**
-     * This endpoint toggles a plugin, either for the agent identified by the agentId parameter (for multi-agent
-     * installations) or for the default agent (for single-agent installations).
+     * This endpoint toggles a plugin.
      *
      * @param pluginId - The ID of the plugin to toggle.
      * @param agentId - The ID of the agent to toggle the plugin for.
      *
      * @returns The plugin toggle output.
      */
-    async putTogglePlugin(pluginId: string, agentId?: string | null): Promise<PluginToggleOutput> {
+    async putTogglePlugin(pluginId: string, agentId: string): Promise<PluginToggleOutput> {
         return this.put<PluginToggleOutput>(
             this.formatUrl(`/toggle/${pluginId}`),
-            {},
-            agentId
+            agentId,
         );
     }
 
     /**
-     * This endpoint retrieves the plugins settings, either for the agent identified by the agentId parameter
-     * (for multi-agent installations) or for the default agent (for single-agent installations).
+     * This endpoint retrieves the plugins settings.
      *
      * @param agentId - The ID of the agent to get the plugins settings for.
      *
      * @returns The plugins settings.
      */
-    async getPluginsSettings(agentId?: string | null): Promise<PluginsSettingsOutput> {
+    async getPluginsSettings(agentId: string): Promise<PluginsSettingsOutput> {
         return this.get<PluginsSettingsOutput>(
             this.formatUrl("/settings"),
-            agentId
+            agentId,
         );
     }
 
     /**
-     * This endpoint retrieves the plugin settings, either for the agent identified by the agentId parameter
-     * (for multi-agent installations) or for the default agent (for single-agent installations).
+     * This endpoint retrieves the plugin settings.
      *
      * @param pluginId - The ID of the plugin to get the settings for.
      * @param agentId - The ID of the agent to get the plugin settings for.
      *
      * @returns The plugin settings.
      */
-    async getPluginSettings(pluginId: string, agentId?: string | null): Promise<PluginSettingsOutput> {
+    async getPluginSettings(pluginId: string, agentId: string): Promise<PluginSettingsOutput> {
         return this.get<PluginSettingsOutput>(
             this.formatUrl(`/settings/${pluginId}`),
             agentId
@@ -72,20 +67,19 @@ export class PluginsEndpoint extends AbstractEndpoint {
     }
 
     /**
-     * This endpoint updates the plugin settings, either for the agent identified by the agentId parameter
-     * (for multi-agent installations) or for the default agent (for single-agent installations).
+     * This endpoint updates the plugin settings.
      *
      * @param pluginId - The ID of the plugin to update the settings for.
-     * @param values - The values to update the plugin settings with.
      * @param agentId - The ID of the agent to update the plugin settings for.
+     * @param values - The values to update the plugin settings with.
      *
      * @returns The plugin settings.
      */
-    async putPluginSettings(pluginId: string, values: any, agentId?: string | null): Promise<PluginSettingsOutput> {
+    async putPluginSettings(pluginId: string, agentId: string, values: any): Promise<PluginSettingsOutput> {
         return this.put<PluginSettingsOutput>(
             this.formatUrl(`/settings/${pluginId}`),
+            agentId,
             values,
-            agentId
         );
     }
 }

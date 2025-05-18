@@ -44,7 +44,9 @@ const notificationClosure = (message: string) => {
 
 // result is the result of the message
 const result = cheshireCatClient.message().sendWebsocketMessage(
-    new Message("Hello world!", 'user', []),  // message body
+    new Message("Hello world!"),  // message body
+    "agent", // agent name
+    "user", // user name
     notificationClosure // websocket notification closure handle
 );
 
@@ -53,18 +55,18 @@ const result = cheshireCatClient.message().sendWebsocketMessage(
 Load data to the rabbit hole:
 ```javascript
 //file
-const result = await cheshireCatClient.rabbitHole().postFile(file);
+const result = await cheshireCatClient.rabbitHole().postFile(file, "agent");
 
 //url
-const result = await cheshireCatClient.rabbitHole().postWeb(url);
+const result = await cheshireCatClient.rabbitHole().postWeb(url, "agent");
 ```
 
 Memory management utilities:
 
 ```javascript
-cheshireCatClient.memory().getMemoryCollections(); // get number of vectors in the working memory
-cheshireCatClient.memory().getMemoryRecall("HELLO"); // recall memories by text
+cheshireCatClient.memory().getMemoryCollections("agent"); // get number of vectors in the working memory
+cheshireCatClient.memory().getMemoryRecall("HELLO", "agent", "user"); // recall memories by text
 
 //delete memory points by metadata, like this example delete by source
-cheshireCatClient.memory().deleteMemoryPointsByMetadata(Collection.Declarative, {"source": url});
+cheshireCatClient.memory().deleteMemoryPointsByMetadata(Collection.Declarative, "agent", {"source": url});
 ```

@@ -112,7 +112,7 @@ export class CheshireCatClient implements Endpoints {
      * Closes the WebSocket connection.
      * @returns The `CheshireCatClient` instance.
      */
-    close(agentId?: string | null, userId?: string | null): CheshireCatClient {
+    close(agentId: string, userId: string): CheshireCatClient {
         this.wsClient.getClient(agentId, userId).close();
         return this;
     }
@@ -124,7 +124,7 @@ export class CheshireCatClient implements Endpoints {
      * @param userId The user ID to connect to
      * @returns The current `CheshireCatClient` class instance
      */
-    onConnected(handler: () => void, agentId?: string | null, userId?: string | null): CheshireCatClient {
+    onConnected(handler: () => void, agentId: string, userId: string): CheshireCatClient {
         const wsClient = this.wsClient.getClient(agentId, userId);
         wsClient.on("open", () => {
             handler();
@@ -139,7 +139,7 @@ export class CheshireCatClient implements Endpoints {
      * @param userId The user ID to connect to
      * @returns The current `CheshireCatClient` class instance
      */
-    onDisconnected(handler: () => void, agentId?: string | null, userId?: string | null): CheshireCatClient {
+    onDisconnected(handler: () => void, agentId: string, userId: string): CheshireCatClient {
         const wsClient = this.wsClient.getClient(agentId, userId);
         wsClient.on("close", () => {
             handler();
@@ -154,7 +154,7 @@ export class CheshireCatClient implements Endpoints {
      * @param userId The user ID to connect to
      * @returns The current `CheshireCatClient` class instance
      */
-    onMessage(handler: (data: SocketResponse) => void, agentId?: string | null, userId?: string | null): CheshireCatClient {
+    onMessage(handler: (data: SocketResponse) => void, agentId: string, userId: string): CheshireCatClient {
         const wsClient = this.wsClient.getClient(agentId, userId);
         wsClient.on("message", (data: SocketResponse) => {
             handler(data);
@@ -171,8 +171,8 @@ export class CheshireCatClient implements Endpoints {
      */
     onError(
         handler: (error: SocketError, event?: WebSocket.ErrorEvent) => void,
-        agentId?: string | null,
-        userId?: string | null
+        agentId: string,
+        userId: string,
     ): CheshireCatClient {
         const wsClient = this.wsClient.getClient(agentId, userId);
         wsClient.on("error", (error: SocketError, event?: WebSocket.ErrorEvent) => {

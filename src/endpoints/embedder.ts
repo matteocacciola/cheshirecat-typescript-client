@@ -13,7 +13,7 @@ export class EmbedderEndpoint extends AbstractEndpoint {
     async getEmbeddersSettings(): Promise<FactoryObjectSettingsOutput> {
         return this.get<FactoryObjectSettingsOutput>(
             this.formatUrl("/settings"),
-            this.systemId
+            this.systemId,
         );
     }
 
@@ -28,7 +28,7 @@ export class EmbedderEndpoint extends AbstractEndpoint {
     async getEmbedderSettings(embedder: string): Promise<FactoryObjectSettingsOutput> {
         return this.get<FactoryObjectSettingsOutput>(
             this.formatUrl(`/settings/${embedder}`),
-            this.systemId
+            this.systemId,
         );
     }
 
@@ -44,8 +44,8 @@ export class EmbedderEndpoint extends AbstractEndpoint {
     async putEmbedderSettings(embedder: string, values: Record<string, any>): Promise<FactoryObjectSettingsOutput> {
         return this.put<FactoryObjectSettingsOutput>(
             this.formatUrl(`/settings/${embedder}`),
+            this.systemId,
             values,
-            this.systemId
         );
     }
 }

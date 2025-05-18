@@ -7,7 +7,7 @@ export class HttpClient {
     protected apikey?: string | null;
     protected token?: string | null;
     protected userId?: string | null = null;
-    protected agentId?: string;
+    protected agentId?: string | null = null;
     protected middlewares: Record<string, (config: InternalAxiosRequestConfig) => InternalAxiosRequestConfig>;
 
     constructor(
@@ -57,7 +57,7 @@ export class HttpClient {
             throw new Error("You must provide an apikey or a token");
         }
 
-        this.agentId = agentId ?? "agent";
+        this.agentId = agentId;
         this.userId = userId;
 
         return this.httpClient;

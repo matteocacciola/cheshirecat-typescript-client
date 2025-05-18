@@ -19,7 +19,7 @@ export abstract class AbstractEndpoint {
         return this.client.getHttpClient().getClient(agentId, userId);
     }
 
-    protected getWsClient(agentId?: string | null, userId?: string | null): WebSocketClient {
+    protected getWsClient(agentId: string, userId: string): WebSocketClient {
         return this.client.getWsClient().getClient(agentId, userId);
     }
 
@@ -27,7 +27,7 @@ export abstract class AbstractEndpoint {
         return this.client.getSerializer().deserialize(data);
     }
 
-    protected async get<T>(endpoint: string, agentId?: string | null, userId?: string | null, query?: any): Promise<T> {
+    protected async get<T>(endpoint: string, agentId: string | null, userId?: string | null, query?: any): Promise<T> {
         const options: any = {};
         if (query) {
             options.query = query;
@@ -39,8 +39,8 @@ export abstract class AbstractEndpoint {
 
     protected async post<T>(
         endpoint: string,
+        agentId: string,
         payload?: any,
-        agentId?: string | null,
         userId?: string | null
     ): Promise<T> {
         const options: any = {};
@@ -54,8 +54,8 @@ export abstract class AbstractEndpoint {
 
     protected async put<T>(
         endpoint: string,
+        agentId: string,
         payload?: any,
-        agentId?: string | null,
         userId?: string | null
     ): Promise<T> {
         const options: any = {};
@@ -69,7 +69,7 @@ export abstract class AbstractEndpoint {
 
     protected async delete<T>(
         endpoint: string,
-        agentId?: string | null,
+        agentId: string,
         userId?: string | null,
         payload?: any
     ): Promise<T> {

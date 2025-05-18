@@ -54,8 +54,8 @@ export class AdminsEndpoint extends AbstractEndpoint {
 
         return this.post<AdminOutput>(
             this.formatUrl("/users"),
+            this.systemId,
             payload,
-            this.systemId
         );
     }
 
@@ -116,8 +116,8 @@ export class AdminsEndpoint extends AbstractEndpoint {
 
         return this.put<AdminOutput>(
             this.formatUrl(`/users/${adminId}`),
+            this.systemId,
             payload,
-            this.systemId
         );
     }
 
@@ -140,8 +140,7 @@ export class AdminsEndpoint extends AbstractEndpoint {
     async postFactoryReset(): Promise<ResetOutput> {
         return this.post<ResetOutput>(
             this.formatUrl("/utils/factory/reset/"),
-            {},
-            this.systemId
+            this.systemId,
         );
     }
 
@@ -152,7 +151,8 @@ export class AdminsEndpoint extends AbstractEndpoint {
      */
     async getAgents(): Promise<string[]> {
         return this.get<string[]>(
-            this.formatUrl("/utils/agents/")
+            this.formatUrl("/utils/agents/"),
+            this.systemId,
         );
     }
 
@@ -163,11 +163,10 @@ export class AdminsEndpoint extends AbstractEndpoint {
      *
      * @returns The output of the create operation.
      */
-    async postAgentCreate(agentId?: string | null): Promise<ResetOutput> {
+    async postAgentCreate(agentId: string): Promise<ResetOutput> {
         return this.post<ResetOutput>(
             this.formatUrl("/utils/agent/create/"),
-            {},
-            agentId
+            agentId,
         );
     }
 
@@ -178,10 +177,9 @@ export class AdminsEndpoint extends AbstractEndpoint {
      *
      * @returns The output of the reset operation.
      */
-    async postAgentReset(agentId?: string | null): Promise<ResetOutput> {
+    async postAgentReset(agentId: string): Promise<ResetOutput> {
         return this.post<ResetOutput>(
             this.formatUrl("/utils/agent/reset/"),
-            {},
             agentId
         );
     }
@@ -193,10 +191,9 @@ export class AdminsEndpoint extends AbstractEndpoint {
      *
      * @returns The output of the reset operation.
      */
-    async postAgentDestroy(agentId?: string | null): Promise<ResetOutput> {
+    async postAgentDestroy(agentId: string): Promise<ResetOutput> {
         return this.post<ResetOutput>(
             this.formatUrl("/utils/agent/destroy/"),
-            {},
             agentId
         );
     }
@@ -256,8 +253,8 @@ export class AdminsEndpoint extends AbstractEndpoint {
     async postInstallPluginFromRegistry(url: string): Promise<PluginCollectionOutput> {
         return this.post<PluginCollectionOutput>(
             this.formatUrl("/plugins/upload/registry"),
+            this.systemId,
             { url },
-            this.systemId
         );
     }
 
@@ -269,7 +266,7 @@ export class AdminsEndpoint extends AbstractEndpoint {
     async getPluginsSettings(): Promise<PluginCollectionOutput> {
         return this.get<PluginCollectionOutput>(
             this.formatUrl("/plugins/settings"),
-            this.systemId
+            this.systemId,
         );
     }
 
@@ -283,7 +280,7 @@ export class AdminsEndpoint extends AbstractEndpoint {
     async getPluginSettings(pluginId: string): Promise<PluginCollectionOutput> {
         return this.get<PluginCollectionOutput>(
             this.formatUrl(`/plugins/settings/${pluginId}`),
-            this.systemId
+            this.systemId,
         );
     }
 
@@ -297,7 +294,7 @@ export class AdminsEndpoint extends AbstractEndpoint {
     async getPluginDetails(pluginId: string): Promise<PluginCollectionOutput> {
         return this.get<PluginCollectionOutput>(
             this.formatUrl(`/plugins/${pluginId}`),
-            this.systemId
+            this.systemId,
         );
     }
 
@@ -311,7 +308,7 @@ export class AdminsEndpoint extends AbstractEndpoint {
     async deletePlugin(pluginId: string): Promise<PluginCollectionOutput> {
         return this.delete<PluginCollectionOutput>(
             this.formatUrl(`/plugins/${pluginId}`),
-            this.systemId
+            this.systemId,
         );
     }
 }

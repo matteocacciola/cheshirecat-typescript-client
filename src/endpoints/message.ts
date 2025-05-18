@@ -1,7 +1,6 @@
 import {AbstractEndpoint} from "./abstract";
 import {MessageOutput} from "../models/api/messages";
 import {Message} from "../models/dtos";
-import WebSocket from "ws";
 import {SocketRequest} from "../models/socket";
 
 export class MessageEndpoint extends AbstractEndpoint {
@@ -14,12 +13,12 @@ export class MessageEndpoint extends AbstractEndpoint {
      *
      * @returns The response from the server
      */
-    async sendHttpMessage(message: Message, agentId?: string | null, userId?: string | null): Promise<MessageOutput> {
+    async sendHttpMessage(message: Message, agentId: string, userId: string): Promise<MessageOutput> {
         return this.post<MessageOutput>(
             "/message",
-            message.toJSON(),
             agentId,
-            userId
+            message.toJSON(),
+            userId,
         );
     }
 
@@ -35,8 +34,8 @@ export class MessageEndpoint extends AbstractEndpoint {
      */
     async sendWebsocketMessage(
         message: Message,
-        agentId?: string | null,
-        userId?: string | null,
+        agentId: string,
+        userId: string,
         closure?: (content: string) => void | null
     ): Promise<MessageOutput> {
         const json = JSON.stringify(message.toJSON());

@@ -9,7 +9,7 @@ import {AbstractEndpoint} from "./abstract";
 import FormData from "form-data";
 import {isNodeEnvironment} from "../utils/environment";
 import {FileSource, readFile, getFileName, getFileMimeType} from "../utils/file-reader";
-import {createFormData, getFormDataHeaders} from "../utils/form-data";
+import {createFormData} from "../utils/form-data";
 import {AllowedMimeTypesOutput} from "../models/api/rabbitholes";
 
 export class RabbitHoleEndpoint extends AbstractEndpoint {
@@ -62,7 +62,7 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
         }
     }
 
-    private async submitForm(form: FormData | globalThis.FormData, url: string, agentId?: string | null) {
+    private async submitForm(form: FormData | globalThis.FormData, url: string, agentId: string) {
         const headers = isNodeEnvironment()
             ? { ...(form as FormData).getHeaders() }
             : {};
@@ -88,10 +88,10 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
      * @param fileSource The source of the file to upload:
      *                  - In Node.js: A string path to the file
      *                  - In browser: A File object
+     * @param agentId ID of the agent to associate with this upload
      * @param fileName Optional custom name for the file. If not provided:
      *                - In Node.js: The basename of the file path is used
      *                - In browser: The name property of the File object is used
-     * @param agentId Optional ID of the agent to associate with this upload
      * @param metadata Optional additional metadata to associate with the file
      *
      * @returns Promise resolving to the API response data
@@ -112,8 +112,8 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
      */
     async postFile(
         fileSource: FileSource,
+        agentId: string,
         fileName?: string | null,
-        agentId?: string | null,
         metadata?: Record<string, any> | null,
     ): Promise<any> {
         const form = createFormData();
@@ -145,7 +145,7 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
      * @param fileSources The sources of the file to upload:
      *                  - In Node.js: An array of strings path to the file
      *                  - In browser: An array of File objects
-     * @param agentId Optional ID of the agent to associate with this upload
+     * @param agentId ID of the agent to associate with this upload
      * @param metadata Optional additional metadata to associate with the file
      *
      * @returns Promise resolving to the API response data
@@ -166,7 +166,7 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
      */
     async postFiles(
         fileSources: FileSource[],
-        agentId?: string | null,
+        agentId: string,
         metadata?: Record<string, any> | null,
     ): Promise<any> {
         const form = new FormData();
@@ -193,14 +193,14 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
      * process.
      *
      * @param webUrl The URL of the web page to be ingested.
-     * @param agentId The ID of the agent to be used for the upload. If not provided, the default agent will be used.
+     * @param agentId The ID of the agent to be used for the upload.
      * @param metadata Additional metadata to be associated with the web URL.
      *
      * @returns The response from the RabbitHole API.
      */
     async postWeb(
         webUrl: string,
-        agentId?: string | null,
+        agentId: string,
         metadata?: Record<string, any> | null,
     ): Promise<any> {
         const payload: Record<string, any> = { url: webUrl };
@@ -213,17 +213,16 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
     }
 
     /**
-     * This method posts a memory point, either for the agent identified by the agentId parameter (for multi-agent
-     * installations) or for the default agent (for single-agent installations). The memory point is ingested into the
-     * RAG system. The process is asynchronous. The provided file must be in JSON format.
+     * This method posts a memory point. The memory point is ingested into the RAG system. The process is asynchronous.
+     * The provided file must be in JSON format.
      * The CheshireCat processes the injection in the background, and the client will be informed at the end of the
      * process.
      *
      * @param fileSource The source of the file to upload:
      *                  - In Node.js: A string path to the file
      *                  - In browser: A File object
+     * @param agentId The ID of the agent to be used for the upload.
      * @param fileName The name of the file to be uploaded. If not provided, the name of the file will be used.
-     * @param agentId The ID of the agent to be used for the upload. If not provided, the default agent will be used.
      *
      * @returns The response from the RabbitHole API.
      *
@@ -243,8 +242,8 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
      */
     async postMemory(
         fileSource: FileSource,
+        agentId: string,
         fileName?: string | null,
-        agentId?: string | null,
     ): Promise<any> {
         const form = new FormData();
 
@@ -260,15 +259,12 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
     /**
      * This method retrieves the allowed MIME types for the RabbitHole API. The allowed MIME types are the MIME types
      * that are allowed to be uploaded to the RabbitHole API. The allowed MIME types are returned in a list.
-     * If the agentId parameter is provided, the allowed MIME types are retrieved for the agent identified by the
-     * agentId parameter (for multi-agent installations). If the agentId parameter is not provided, the allowed MIME
-     * types are retrieved for the default agent (for single-agent installations).
      *
      * @param agentId The ID of the agent to be used for the upload. If not provided, the default agent will be used.
      *
      * @returns The allowed MIME types for the RabbitHole API.
      */
-    async getAllowedMimeTypes(agentId?: string | null): Promise<AllowedMimeTypesOutput> {
+    async getAllowedMimeTypes(agentId: string): Promise<AllowedMimeTypesOutput> {
         return this.get<AllowedMimeTypesOutput>(this.formatUrl("/allowed-mimetypes"), agentId);
     }
 }
