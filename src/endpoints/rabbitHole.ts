@@ -260,11 +260,23 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
      * This method retrieves the allowed MIME types for the RabbitHole API. The allowed MIME types are the MIME types
      * that are allowed to be uploaded to the RabbitHole API. The allowed MIME types are returned in a list.
      *
-     * @param agentId The ID of the agent to be used for the upload. If not provided, the default agent will be used.
+     * @param agentId The ID of the agent to be used.
      *
      * @returns The allowed MIME types for the RabbitHole API.
      */
     async getAllowedMimeTypes(agentId: string): Promise<AllowedMimeTypesOutput> {
         return this.get<AllowedMimeTypesOutput>(this.formatUrl("/allowed-mimetypes"), agentId);
+    }
+
+    /**
+     * This method retrieves the web sources for the RabbitHole API. The web sources are the web URLs that are allowed
+     *      * to be uploaded to the RabbitHole API. The web sources are returned in a list.
+     *
+     * @param agentId The ID of the agent to be used.
+     *
+     * @returns The URLs of the web sources for the RabbitHole API.
+     */
+    async getWebSources(agentId: string): Promise<string[]> {
+        return this.get<string[]>(this.formatUrl("/web"), agentId);
     }
 }
