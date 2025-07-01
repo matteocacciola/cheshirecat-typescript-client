@@ -1,5 +1,12 @@
 import {MemoryPoint} from "../../types";
-import {ConversationHistoryItem} from "./nested/memories";
+import {
+    CollectionsItem,
+    ConversationHistoryItem,
+    MemoryPointsDeleteByMetadataInfo,
+    MemoryRecallQuery,
+    MemoryRecallVectors,
+    VectorRecord,
+} from "./nested/memories";
 
 export interface CollectionPointsDestroyOutput {
     deleted: Record<string, boolean>;
@@ -22,19 +29,26 @@ export class ConversationHistoryOutput {
     }
 }
 
-export interface CollectionsItem {
-    id: string;
-    name: string;
-    description: string;
-    created: string;
-    updated: string;
-}
-
 export interface MemoryPointDeleteOutput {
     deleted: string;
 }
 
 export interface MemoryPointOutput extends MemoryPoint {
     id: string;
-    vector: number[];
+    vector: number[] | number[][] | Record<string, unknown>;
+}
+
+export interface MemoryPointsDeleteByMetadataOutput {
+    deleted: MemoryPointsDeleteByMetadataInfo;
+}
+
+export interface MemoryPointsOutput
+{
+    points: VectorRecord;
+    nextOffset?: string | number | null;
+}
+
+export interface MemoryRecallOutput {
+    query: MemoryRecallQuery;
+    vectors: MemoryRecallVectors;
 }

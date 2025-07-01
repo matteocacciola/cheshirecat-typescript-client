@@ -5,20 +5,6 @@ export interface CollectionsItem {
     vectorsCount: number;
 }
 
-export class ConversationHistoryItem {
-    who: string;
-    when: number;
-    content: ConversationHistoryItemContent;
-
-    public toArray(): object {
-        return {
-            "who": this.who,
-            "content": this.content.toArray(),
-            "when": this.when,
-        };
-    }
-}
-
 export class ConversationHistoryItemContent extends MessageBase {
     why?: Why | null = null;
 
@@ -39,6 +25,20 @@ export class ConversationHistoryItemContent extends MessageBase {
     }
 }
 
+export class ConversationHistoryItem {
+    who: string;
+    when: number;
+    content: ConversationHistoryItemContent;
+
+    public toArray(): object {
+        return {
+            "who": this.who,
+            "content": this.content.toArray(),
+            "when": this.when,
+        };
+    }
+}
+
 export interface MemoryPointsDeleteByMetadataInfo {
     operationId: number;
     status: string;
@@ -46,7 +46,7 @@ export interface MemoryPointsDeleteByMetadataInfo {
 
 export interface MemoryRecallQuery {
     text: string;
-    vector: number[];
+    vector: number[] | number[][] | Record<string, unknown>;
 }
 
 export interface MemoryRecallVectors {
@@ -57,22 +57,7 @@ export interface MemoryRecallVectors {
 export interface VectorRecord {
     id: string;
     payload: Record<string, any> | null;
-    vector: number[] | null;
-    shardKey: string | null;
+    vector: number[] | number[][] | Record<string, unknown> | null;
+    shardKey: number | string | null;
     orderValue: number | null;
-}
-
-export interface MemoryRecallOutput {
-    query: MemoryRecallQuery;
-    vectors: MemoryRecallVectors;
-}
-
-export interface MemoryPointsDeleteByMetadataOutput {
-    deleted: MemoryPointsDeleteByMetadataInfo;
-}
-
-export interface MemoryPointsOutput
-{
-    points: VectorRecord;
-    nextOffset?: string | number | null;
 }

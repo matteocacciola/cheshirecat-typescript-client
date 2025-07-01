@@ -5,14 +5,12 @@ import {
     ConversationHistoryDeleteOutput,
     ConversationHistoryOutput,
     MemoryPointDeleteOutput,
-    MemoryPointOutput
-} from "../models/api/memories";
-import {Collection, Role} from "../enums";
-import {
     MemoryPointsDeleteByMetadataOutput,
     MemoryPointsOutput,
-    MemoryRecallOutput
-} from "../models/api/nested/memories";
+    MemoryPointOutput,
+    MemoryRecallOutput,
+} from "../models/api/memories";
+import {Collection, Role} from "../enums";
 import {Why} from "../models/dtos";
 
 export class MemoryEndpoint extends AbstractEndpoint {
