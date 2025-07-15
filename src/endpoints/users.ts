@@ -34,12 +34,10 @@ export class UsersEndpoint extends AbstractEndpoint {
      * This endpoint is used to get a list of available permissions in the system. The permissions are used to define
      * the access rights of the users in the system. The permissions are defined by the system administrator.
      *
-     * @param agentId The ID of the agent.
-     *
      * @returns The available permissions in the system.
      */
-    async getAvailablePermissions(agentId: string): Promise<Permission> {
-        const response = await this.getHttpClient(agentId).get("/auth/available-permissions");
+    async getAvailablePermissions(): Promise<Permission> {
+        const response = await this.getHttpClient().get("/auth/available-permissions");
 
         return this.deserialize<Permission>(response.data);
     }

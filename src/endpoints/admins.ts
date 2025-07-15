@@ -6,6 +6,7 @@ import {AbstractEndpoint} from "./abstract";
 import {TokenOutput} from "../models/api/tokens";
 import {AdminOutput, ResetOutput} from "../models/api/admins";
 import {PluginCollectionOutput} from "../models/api/plugins";
+import {Permission} from "../models/dtos";
 
 export class AdminsEndpoint extends AbstractEndpoint {
     protected prefix = "/admins";
@@ -31,6 +32,20 @@ export class AdminsEndpoint extends AbstractEndpoint {
         this.client.addToken(result.accessToken);
 
         return result;
+    }
+
+    /**
+     * This endpoint is used to get a list of available permissions in the system. The permissions are used to define
+     * the access rights of the admins in the system. The permissions are defined by the system administrator.
+     *
+     * @returns The available permissions in the system.
+     */
+    async getAvailablePermissions(): Promise<Permission> {
+        const response = await this.getHttpClient().get(
+            this.formatUrl("/auth/available-permissions")
+        );
+
+        return this.deserialize<Permission>(response.data);
     }
 
     /**
