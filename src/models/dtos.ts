@@ -68,7 +68,7 @@ export class Message extends MessageBase {
     constructor(
         text: string,
         image?: string,
-        public additionalFields?: Record<string, any>
+        public metadata?: Record<string, any>
     ) {
         super();
         this.text = text;
@@ -78,8 +78,8 @@ export class Message extends MessageBase {
     public toArray(): Record<string, any> {
         const result = super.toArray();
 
-        if (this.additionalFields) {
-            return { ...result, ...this.additionalFields };
+        if (this.metadata) {
+            result["metadata"] = this.metadata;
         }
 
         return result;
