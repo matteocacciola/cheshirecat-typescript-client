@@ -71,13 +71,13 @@ export class PluginCollectionOutput {
 export class PluginItemOutput {
     id: string;
     name: string;
-    description: string;
-    authorName: string;
-    authorUrl: string;
-    pluginUrl: string;
-    tags: string;
-    thumb: string;
-    version: string;
+    description?: string | null = null;
+    authorName?: string | null = null;
+    authorUrl?: string | null = null;
+    pluginUrl?: string | null = null;
+    tags?: string | null = null;
+    thumb?: string | null = null;
+    version?: string | null = null;
     active: boolean;
     hooks: HookOutput[];
     tools: ToolOutput[];
@@ -105,16 +105,16 @@ export class PluginItemOutput {
 }
 
 export class PluginItemRegistryOutput {
-    id: string;
+    id?: string | null = null;
     name: string;
-    description: string;
-    authorName: string;
-    authorUrl: string;
-    pluginUrl: string;
-    tags: string;
-    thumb: string;
-    version: string;
-    url: string;
+    description?: string | null = null;
+    authorName?: string | null = null;
+    authorUrl?: string | null = null;
+    pluginUrl?: string | null = null;
+    tags?: string | null = null;
+    thumb?: string | null = null;
+    version?: string | null = null;
+    url?: string | null = null;
 
     public toArray(): object {
         return {
