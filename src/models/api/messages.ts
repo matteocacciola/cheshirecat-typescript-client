@@ -2,7 +2,7 @@ import {MessageBase, Why} from "../dtos";
 
 export class MessageOutput extends MessageBase {
     type?: string | null = "chat";
-    why: Why;
+    why?: Why | null = null;
     error?: boolean = false;
     readonly content: string; // deprecated
 
@@ -15,7 +15,7 @@ export class MessageOutput extends MessageBase {
         return {
             ...super.toArray(),
             type: this.type,
-            why: this.why.toArray(),
+            why: this.why?.toArray(),
             content: this.text,
             error: this.error,
         };
