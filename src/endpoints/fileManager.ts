@@ -62,4 +62,12 @@ export class FileManagerEndpoint extends AbstractEndpoint {
             agentId,
         );
     }
+
+    async getFile(agentId: string, filePath: string): Promise<ReadableStream> {
+        const response = await this.getHttpClient(agentId).get(
+            this.formatUrl(`/download/${filePath}`),
+            { responseType: 'stream' }
+        );
+        return response.data;
+    }
 }
