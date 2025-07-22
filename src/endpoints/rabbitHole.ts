@@ -212,7 +212,7 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
 
         const response = await this.getHttpClient(agentId).post(endpoint, payload);
         if (response.status !== 200) {
-            throw new Error(`Failed to fetch data from ${endpoint}: ${response.statusText}`);
+            throw new Error(`Failed to post data to ${endpoint}: ${response.statusText}`);
         }
         return response.data;
     }

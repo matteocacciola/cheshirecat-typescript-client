@@ -53,7 +53,7 @@ export abstract class AbstractEndpoint {
 
         const response = await this.getHttpClient(agentId, userId).post(endpoint, options);
         if (response.status !== 200) {
-            throw new Error(`Failed to fetch data from ${endpoint}: ${response.statusText}`);
+            throw new Error(`Failed to post data to ${endpoint}: ${response.statusText}`);
         }
         return this.deserialize<T>(response.data);
     }
@@ -71,7 +71,7 @@ export abstract class AbstractEndpoint {
 
         const response = await this.getHttpClient(agentId, userId).put(endpoint, options);
         if (response.status !== 200) {
-            throw new Error(`Failed to fetch data from ${endpoint}: ${response.statusText}`);
+            throw new Error(`Failed to put data to ${endpoint}: ${response.statusText}`);
         }
         return this.deserialize<T>(response.data);
     }
@@ -89,7 +89,7 @@ export abstract class AbstractEndpoint {
 
         const response = await this.getHttpClient(agentId, userId).delete(endpoint, options);
         if (response.status !== 200) {
-            throw new Error(`Failed to fetch data from ${endpoint}: ${response.statusText}`);
+            throw new Error(`Failed to delete data from ${endpoint}: ${response.statusText}`);
         }
         return this.deserialize<T>(response.data);
     }

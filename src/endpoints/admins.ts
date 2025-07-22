@@ -264,7 +264,7 @@ export class AdminsEndpoint extends AbstractEndpoint {
             },
         });
         if (response.status !== 200) {
-            throw new Error(`Failed to fetch data from ${endpoint}: ${response.statusText}`);
+            throw new Error(`Failed to post data to ${endpoint}: ${response.statusText}`);
         }
 
         return this.deserialize<PluginCollectionOutput>(response.data);
