@@ -265,6 +265,7 @@ export class MemoryEndpoint extends AbstractEndpoint {
      * @param agentId The agent ID.
      * @param limit The maximum number of memory points to retrieve.
      * @param offset The number of memory points to skip.
+     * @param metadata Optional metadata to filter the memory points by.
      *
      * @returns The memory points output.
      */
@@ -273,10 +274,12 @@ export class MemoryEndpoint extends AbstractEndpoint {
         agentId: string,
         limit?: number | null,
         offset?: number | null,
+        metadata?: any,
     ): Promise<MemoryPointsOutput> {
         const query = {
             ...(limit && {limit}),
             ...(offset && {offset}),
+            ...(metadata && {metadata: JSON.stringify(metadata)}),
         };
 
         return this.get<MemoryPointsOutput>(
