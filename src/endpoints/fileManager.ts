@@ -64,10 +64,15 @@ export class FileManagerEndpoint extends AbstractEndpoint {
     }
 
     async getFile(agentId: string, filePath: string): Promise<ReadableStream> {
+        const endpoint = this.formatUrl(`/download/${filePath}`);
+
         const response = await this.getHttpClient(agentId).get(
-            this.formatUrl(`/download/${filePath}`),
+            endpoint,
             { responseType: 'stream' }
         );
+        if (response.status !== 200) {
+            throw new Error(`Failed to fetch data from ${endpoint}: ${response.statusText}`);
+        }
         return response.data;
     }
 }

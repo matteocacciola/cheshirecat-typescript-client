@@ -208,7 +208,12 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
             payload["metadata"] = metadata;
         }
 
-        const response = await this.getHttpClient(agentId).post(this.formatUrl("/web"), payload);
+        const endpoint = this.formatUrl("/web");
+
+        const response = await this.getHttpClient(agentId).post(endpoint, payload);
+        if (response.status !== 200) {
+            throw new Error(`Failed to fetch data from ${endpoint}: ${response.statusText}`);
+        }
         return response.data;
     }
 

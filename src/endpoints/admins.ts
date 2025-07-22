@@ -41,9 +41,11 @@ export class AdminsEndpoint extends AbstractEndpoint {
      * @returns The available permissions in the system.
      */
     async getAvailablePermissions(): Promise<Permission> {
-        const response = await this.getHttpClient().get(
-            this.formatUrl("/auth/available-permissions")
-        );
+        const endpoint = this.formatUrl("/auth/available-permissions");
+        const response = await this.getHttpClient().get(endpoint);
+        if (response.status !== 200) {
+            throw new Error(`Failed to fetch data from ${endpoint}: ${response.statusText}`);
+        }
 
         return this.deserialize<Permission>(response.data);
     }
@@ -87,10 +89,15 @@ export class AdminsEndpoint extends AbstractEndpoint {
         if (limit) query.limit = limit;
         if (skip) query.skip = skip;
 
+        const endpoint = this.formatUrl("/users");
+
         const response = await this.getHttpClient(this.systemId).get(
-            this.formatUrl("/users"),
+            endpoint,
             query ? { params: query } : undefined
         );
+        if (response.status !== 200) {
+            throw new Error(`Failed to fetch data from ${endpoint}: ${response.statusText}`);
+        }
 
         return response.data.map((item: any) =>
             this.deserialize<AdminOutput>(JSON.stringify(item))
@@ -248,12 +255,17 @@ export class AdminsEndpoint extends AbstractEndpoint {
             contentType: mime.contentType(finalZipPath) || "application/octet-stream"
         });
 
-        const response = await this.getHttpClient(this.systemId).post(this.formatUrl("/plugins/upload"), form, {
+        const endpoint = this.formatUrl("/plugins/upload");
+
+        const response = await this.getHttpClient(this.systemId).post(endpoint, form, {
             headers: {
                 ...form.getHeaders(),
                 'Content-Type': `multipart/form-data; boundary=${form.getBoundary()}`
             },
         });
+        if (response.status !== 200) {
+            throw new Error(`Failed to fetch data from ${endpoint}: ${response.statusText}`);
+        }
 
         return this.deserialize<PluginCollectionOutput>(response.data);
     }

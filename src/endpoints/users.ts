@@ -37,7 +37,11 @@ export class UsersEndpoint extends AbstractEndpoint {
      * @returns The available permissions in the system.
      */
     async getAvailablePermissions(): Promise<Permission> {
-        const response = await this.getHttpClient().get("/auth/available-permissions");
+        const endpoint = "/auth/available-permissions";
+        const response = await this.getHttpClient().get(endpoint);
+        if (response.status !== 200) {
+            throw new Error(`Failed to fetch data from ${endpoint}: ${response.statusText}`);
+        }
 
         return this.deserialize<Permission>(response.data);
     }
@@ -82,7 +86,11 @@ export class UsersEndpoint extends AbstractEndpoint {
      * @returns The list of users in the system.
      */
     async getUsers(agentId: string): Promise<UserOutput[]> {
-        const response = await this.getHttpClient(agentId).get(this.prefix);
+        const endpoint = this.prefix;
+        const response = await this.getHttpClient(agentId).get(endpoint);
+        if (response.status !== 200) {
+            throw new Error(`Failed to fetch data from ${endpoint}: ${response.statusText}`);
+        }
 
         const users = response.data;
         return users.map((user: any) => this.deserialize<UserOutput>(JSON.stringify(user)));
