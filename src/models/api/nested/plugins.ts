@@ -13,6 +13,6 @@ export interface PluginSettingsOutput {
 export interface PropertySettingsOutput {
     default: any;
     extra?: Record<string, any> | null;
-    title: string;
-    type: string;
+    title?: string | null;
+    type?: string | null;
 }
