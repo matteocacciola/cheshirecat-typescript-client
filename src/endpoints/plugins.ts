@@ -61,10 +61,11 @@ export class PluginsEndpoint extends AbstractEndpoint {
      * @returns The plugin settings.
      */
     async getPluginSettings(pluginId: string, agentId: string): Promise<PluginSettingsOutput> {
-        return this.get<PluginSettingsOutput>(
+        const result = await this.get<PluginSettingsOutput>(
             this.formatUrl(`/settings/${pluginId}`),
             agentId
         );
+        return PluginSettingsOutput.convertScheme(result);
     }
 
     /**
@@ -77,10 +78,11 @@ export class PluginsEndpoint extends AbstractEndpoint {
      * @returns The plugin settings.
      */
     async putPluginSettings(pluginId: string, agentId: string, values: any): Promise<PluginSettingsOutput> {
-        return this.put<PluginSettingsOutput>(
+        const result = await this.put<PluginSettingsOutput>(
             this.formatUrl(`/settings/${pluginId}`),
             agentId,
             values,
         );
+        return PluginSettingsOutput.convertScheme(result);
     }
 }

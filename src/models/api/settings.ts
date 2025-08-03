@@ -1,19 +1,11 @@
 export interface SettingDeleteOutput {
-    deleted: boolean;
-}
-
-export interface SettingOutput {
-    name: string;
-    value: Record<string, any>;
-    category: string;
-    settingId: string;
-    updatedAt: number | string;
+    deleted: string;
 }
 
 export interface SettingOutputItem {
-    setting: SettingOutput;
+    setting: Record<string, any>;
 }
 
 export interface SettingsOutputCollection {
-    settings: SettingOutput[];
+    settings: Record<string, any>[];
 }

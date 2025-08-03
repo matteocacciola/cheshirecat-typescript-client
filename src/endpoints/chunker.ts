@@ -12,10 +12,11 @@ export class ChunkerEndpoint extends AbstractEndpoint {
      * @returns The settings of all the large language models
      */
     async getChunkersSettings(agentId: string): Promise<FactoryObjectSettingsOutput> {
-        return this.get<FactoryObjectSettingsOutput>(
+        const result = await this.get<FactoryObjectSettingsOutput>(
             this.formatUrl("/settings"),
             agentId
         );
+        return FactoryObjectSettingsOutput.convertSchemes(result);
     }
 
     /**
@@ -27,10 +28,11 @@ export class ChunkerEndpoint extends AbstractEndpoint {
      * @returns The settings of the chunker
      */
     async getChunkerSettings(chunker: string, agentId: string): Promise<FactoryObjectSettingOutput> {
-        return this.get<FactoryObjectSettingOutput>(
+        const result = await this.get<FactoryObjectSettingOutput>(
             this.formatUrl(`/settings/${chunker}`),
             agentId
         );
+        return FactoryObjectSettingOutput.convertScheme(result);
     }
 
     /**
@@ -47,10 +49,11 @@ export class ChunkerEndpoint extends AbstractEndpoint {
         agentId: string,
         values: Record<string, any>,
     ): Promise<FactoryObjectSettingOutput> {
-        return this.put<FactoryObjectSettingOutput>(
+        const result = await this.put<FactoryObjectSettingOutput>(
             this.formatUrl(`/settings/${chunker}`),
             agentId,
             values,
         );
+        return FactoryObjectSettingOutput.convertScheme(result);
     }
 }

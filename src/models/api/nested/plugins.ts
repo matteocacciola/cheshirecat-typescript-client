@@ -4,10 +4,18 @@ export interface PluginSchemaSettings {
     properties: Record<string, PropertySettingsOutput>;
 }
 
-export interface PluginSettingsOutput {
+export class PluginSettingsOutput {
     name: string;
-    scheme?: PluginSchemaSettings | null;
     value: Record<string, any>;
+    scheme?: PluginSchemaSettings | null;
+
+    static convertScheme(obj: PluginSettingsOutput): PluginSettingsOutput {
+        // if obj.scheme is an empty object, set it to null
+        if (obj.scheme && Object.keys(obj.scheme).length === 0) {
+            obj.scheme = null;
+        }
+        return obj;
+    }
 }
 
 export interface PropertySettingsOutput {

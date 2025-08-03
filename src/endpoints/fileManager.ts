@@ -14,10 +14,11 @@ export class FileManagerEndpoint extends AbstractEndpoint {
      *
      */
     async getFileManagersSettings(agentId: string): Promise<FactoryObjectSettingsOutput> {
-        return this.get<FactoryObjectSettingsOutput>(
+        const result = await this.get<FactoryObjectSettingsOutput>(
             this.formatUrl("/settings"),
             agentId,
         );
+        return FactoryObjectSettingsOutput.convertSchemes(result);
     }
 
     /**
@@ -29,10 +30,11 @@ export class FileManagerEndpoint extends AbstractEndpoint {
      * @returns the settings of the specified plugin file manager
      */
     async getFileManagerSettings(fileManager: string, agentId: string): Promise<FactoryObjectSettingsOutput> {
-        return this.get<FactoryObjectSettingsOutput>(
+        const result = await this.get<FactoryObjectSettingsOutput>(
             this.formatUrl(`/settings/${fileManager}`),
             agentId,
         );
+        return FactoryObjectSettingsOutput.convertSchemes(result);
     }
 
     /**
@@ -49,11 +51,12 @@ export class FileManagerEndpoint extends AbstractEndpoint {
         agentId: string,
         values: Record<string, any>,
     ): Promise<FactoryObjectSettingsOutput> {
-        return this.put<FactoryObjectSettingsOutput>(
+        const result = await this.put<FactoryObjectSettingsOutput>(
             this.formatUrl(`/settings/${fileManager}`),
             agentId,
             values,
         );
+        return FactoryObjectSettingsOutput.convertSchemes(result);
     }
 
     async getFileManagerAttributes(agentId: string): Promise<FileManagerAttributes> {

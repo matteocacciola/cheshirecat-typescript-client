@@ -11,10 +11,11 @@ export class EmbedderEndpoint extends AbstractEndpoint {
      * @returns The settings of all the embedders
      */
     async getEmbeddersSettings(): Promise<FactoryObjectSettingsOutput> {
-        return this.get<FactoryObjectSettingsOutput>(
+        const result = await this.get<FactoryObjectSettingsOutput>(
             this.formatUrl("/settings"),
             this.systemId,
         );
+        return FactoryObjectSettingsOutput.convertSchemes(result);
     }
 
     /**
@@ -26,10 +27,11 @@ export class EmbedderEndpoint extends AbstractEndpoint {
      * @returns The settings of the embedder
      */
     async getEmbedderSettings(embedder: string): Promise<FactoryObjectSettingsOutput> {
-        return this.get<FactoryObjectSettingsOutput>(
+        const result = await this.get<FactoryObjectSettingsOutput>(
             this.formatUrl(`/settings/${embedder}`),
             this.systemId,
         );
+        return FactoryObjectSettingsOutput.convertSchemes(result);
     }
 
     /**
@@ -42,10 +44,11 @@ export class EmbedderEndpoint extends AbstractEndpoint {
      * @returns The updated settings of the embedder
      */
     async putEmbedderSettings(embedder: string, values: Record<string, any>): Promise<FactoryObjectSettingsOutput> {
-        return this.put<FactoryObjectSettingsOutput>(
+        const result = await this.put<FactoryObjectSettingsOutput>(
             this.formatUrl(`/settings/${embedder}`),
             this.systemId,
             values,
         );
+        return FactoryObjectSettingsOutput.convertSchemes(result);
     }
 }

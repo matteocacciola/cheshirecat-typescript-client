@@ -14,10 +14,11 @@ export class SettingsEndpoint extends AbstractEndpoint {
      * @returns The settings of the agent
      */
     async getSettings(agentId: string): Promise<FactoryObjectSettingsOutput> {
-        return this.get<FactoryObjectSettingsOutput>(
+        const result = await this.get<FactoryObjectSettingsOutput>(
             this.formatUrl("/settings"),
             agentId
         );
+        return FactoryObjectSettingsOutput.convertSchemes(result);
     }
 
     /**
@@ -45,10 +46,11 @@ export class SettingsEndpoint extends AbstractEndpoint {
      * @returns The setting
      */
     async getSetting(setting: string, agentId: string): Promise<FactoryObjectSettingsOutput> {
-        return this.get<FactoryObjectSettingsOutput>(
+        const result = await this.get<FactoryObjectSettingsOutput>(
             this.formatUrl(`/settings/${setting}`),
             agentId,
         );
+        return FactoryObjectSettingsOutput.convertSchemes(result);
     }
 
     /**
@@ -65,11 +67,12 @@ export class SettingsEndpoint extends AbstractEndpoint {
         agentId: string,
         values: Record<string, any>,
     ): Promise<FactoryObjectSettingsOutput> {
-        return this.put<FactoryObjectSettingsOutput>(
+        const result = await this.put<FactoryObjectSettingsOutput>(
             this.formatUrl(`/settings/${setting}`),
             agentId,
             values,
         );
+        return FactoryObjectSettingsOutput.convertSchemes(result);
     }
 
     /**
@@ -81,9 +84,10 @@ export class SettingsEndpoint extends AbstractEndpoint {
      * @returns The deleted setting
      */
     async deleteSetting(setting: string, agentId: string): Promise<FactoryObjectSettingsOutput> {
-        return this.delete<FactoryObjectSettingsOutput>(
+        const result = await this.delete<FactoryObjectSettingsOutput>(
             this.formatUrl(`/settings/${setting}`),
             agentId,
         );
+        return FactoryObjectSettingsOutput.convertSchemes(result);
     }
 }
