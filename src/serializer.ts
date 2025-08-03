@@ -14,7 +14,7 @@ export class Serializer {
 
     public deserialize<T>(json: string | object): T {
         const data = typeof(json) === "string" ? JSON.parse(json) : json;
-        return this.denormalize(data);
+        return this.denormalize<T>(data);
     }
 
     private normalize(data: any): any {

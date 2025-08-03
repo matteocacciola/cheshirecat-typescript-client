@@ -24,7 +24,7 @@ export abstract class AbstractEndpoint {
     }
 
     protected deserialize<T>(data: string): T {
-        return this.client.getSerializer().deserialize(data);
+        return this.client.getSerializer().deserialize<T>(data);
     }
 
     protected async get<T>(endpoint: string, agentId: string | null, userId?: string | null, query?: any): Promise<T> {
