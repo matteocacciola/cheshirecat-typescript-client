@@ -1,7 +1,6 @@
 import {AbstractEndpoint} from "./abstract";
-import {FactoryObjectSettingsOutput} from "../models/api/factories";
 import {SettingInput} from "../models/dtos";
-import {SettingOutputItem} from "../models/api/settings";
+import {SettingDeleteOutput, SettingOutputItem, SettingsOutputCollection} from "../models/api/settings";
 
 export class SettingsEndpoint extends AbstractEndpoint {
     protected prefix = "/settings";
@@ -13,12 +12,11 @@ export class SettingsEndpoint extends AbstractEndpoint {
      *
      * @returns The settings of the agent
      */
-    async getSettings(agentId: string): Promise<FactoryObjectSettingsOutput> {
-        const result = await this.get<FactoryObjectSettingsOutput>(
+    async getSettings(agentId: string): Promise<SettingsOutputCollection> {
+        return this.get<SettingsOutputCollection>(
             this.formatUrl("/settings"),
             agentId
         );
-        return FactoryObjectSettingsOutput.convertSchemes(result);
     }
 
     /**
@@ -45,12 +43,11 @@ export class SettingsEndpoint extends AbstractEndpoint {
      *
      * @returns The setting
      */
-    async getSetting(setting: string, agentId: string): Promise<FactoryObjectSettingsOutput> {
-        const result = await this.get<FactoryObjectSettingsOutput>(
+    async getSetting(setting: string, agentId: string): Promise<SettingOutputItem> {
+        return this.get<SettingOutputItem>(
             this.formatUrl(`/settings/${setting}`),
             agentId,
         );
-        return FactoryObjectSettingsOutput.convertSchemes(result);
     }
 
     /**
@@ -66,13 +63,12 @@ export class SettingsEndpoint extends AbstractEndpoint {
         setting: string,
         agentId: string,
         values: Record<string, any>,
-    ): Promise<FactoryObjectSettingsOutput> {
-        const result = await this.put<FactoryObjectSettingsOutput>(
+    ): Promise<SettingOutputItem> {
+        return this.put<SettingOutputItem>(
             this.formatUrl(`/settings/${setting}`),
             agentId,
             values,
         );
-        return FactoryObjectSettingsOutput.convertSchemes(result);
     }
 
     /**
@@ -83,11 +79,10 @@ export class SettingsEndpoint extends AbstractEndpoint {
      *
      * @returns The deleted setting
      */
-    async deleteSetting(setting: string, agentId: string): Promise<FactoryObjectSettingsOutput> {
-        const result = await this.delete<FactoryObjectSettingsOutput>(
+    async deleteSetting(setting: string, agentId: string): Promise<SettingDeleteOutput> {
+        return this.delete<SettingDeleteOutput>(
             this.formatUrl(`/settings/${setting}`),
             agentId,
         );
-        return FactoryObjectSettingsOutput.convertSchemes(result);
     }
 }
