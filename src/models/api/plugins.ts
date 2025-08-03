@@ -1,4 +1,5 @@
 import {PluginSettingsOutput} from "./nested/plugins";
+import {convertTags as baseConvertTags} from "../../helpers";
 
 export class FilterOutput {
     query?: string | null = null;
@@ -65,6 +66,22 @@ export class PluginCollectionOutput {
             installed: this.installed.map(item => item.toArray()),
             registry: this.registry.map(item => item.toArray()),
         };
+    }
+
+    static convertTags(obj: PluginCollectionOutput): PluginCollectionOutput {
+        if (Array.isArray(obj.installed)) {
+            for (const plugin of obj.installed) {
+                baseConvertTags(plugin);
+            }
+        }
+
+        if (Array.isArray(obj.registry)) {
+            for (const plugin of obj.registry) {
+                baseConvertTags(plugin);
+            }
+        }
+
+        return obj;
     }
 }
 

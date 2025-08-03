@@ -14,12 +14,13 @@ export class PluginsEndpoint extends AbstractEndpoint {
      * @returns The available plugins.
      */
     async getAvailablePlugins(agentId: string, pluginName?: string | null): Promise<PluginCollectionOutput> {
-        return this.get<PluginCollectionOutput>(
+        const result = await this.get<PluginCollectionOutput>(
             this.prefix,
             agentId,
             null,
             pluginName ? {query: pluginName} : {},
         );
+        return PluginCollectionOutput.convertTags(result);
     }
 
     /**

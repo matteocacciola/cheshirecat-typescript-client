@@ -228,12 +228,14 @@ export class AdminsEndpoint extends AbstractEndpoint {
      * @returns The available plugins.
      */
     async getAvailablePlugins(pluginName?: string | null): Promise<PluginCollectionOutput> {
-        return this.get<PluginCollectionOutput>(
+        const result = await this.get<PluginCollectionOutput>(
             this.formatUrl("/plugins"),
             this.systemId,
             undefined,
             pluginName ? { query: pluginName } : undefined
         );
+
+        return PluginCollectionOutput.convertTags(result);
     }
 
     // create a function to open a file and pass the file contents to postMultipart
@@ -266,7 +268,8 @@ export class AdminsEndpoint extends AbstractEndpoint {
             throw new Error(`Failed to post data to ${endpoint}: ${response.statusText}`);
         }
 
-        return this.deserialize<PluginCollectionOutput>(response.data);
+        const result = this.deserialize<PluginCollectionOutput>(response.data);
+        return PluginCollectionOutput.convertTags(result);
     }
 
     /**
@@ -277,11 +280,12 @@ export class AdminsEndpoint extends AbstractEndpoint {
      * @returns The output of the plugin installation.
      */
     async postInstallPluginFromRegistry(url: string): Promise<PluginCollectionOutput> {
-        return this.post<PluginCollectionOutput>(
+        const result = await this.post<PluginCollectionOutput>(
             this.formatUrl("/plugins/upload/registry"),
             this.systemId,
             { url },
         );
+        return PluginCollectionOutput.convertTags(result);
     }
 
     /**
@@ -290,10 +294,11 @@ export class AdminsEndpoint extends AbstractEndpoint {
      * @returns The plugins settings.
      */
     async getPluginsSettings(): Promise<PluginCollectionOutput> {
-        return this.get<PluginCollectionOutput>(
+        const result = await this.get<PluginCollectionOutput>(
             this.formatUrl("/plugins/settings"),
             this.systemId,
         );
+        return PluginCollectionOutput.convertTags(result);
     }
 
     /**
@@ -304,10 +309,11 @@ export class AdminsEndpoint extends AbstractEndpoint {
      * @returns The plugin settings.
      */
     async getPluginSettings(pluginId: string): Promise<PluginCollectionOutput> {
-        return this.get<PluginCollectionOutput>(
+        const result = await this.get<PluginCollectionOutput>(
             this.formatUrl(`/plugins/settings/${pluginId}`),
             this.systemId,
         );
+        return PluginCollectionOutput.convertTags(result);
     }
 
     /**
@@ -318,10 +324,11 @@ export class AdminsEndpoint extends AbstractEndpoint {
      * @returns The plugin details.
      */
     async getPluginDetails(pluginId: string): Promise<PluginCollectionOutput> {
-        return this.get<PluginCollectionOutput>(
+        const result = await this.get<PluginCollectionOutput>(
             this.formatUrl(`/plugins/${pluginId}`),
             this.systemId,
         );
+        return PluginCollectionOutput.convertTags(result);
     }
 
     /**
@@ -332,9 +339,10 @@ export class AdminsEndpoint extends AbstractEndpoint {
      * @returns The output of the plugin deletion.
      */
     async deletePlugin(pluginId: string): Promise<PluginCollectionOutput> {
-        return this.delete<PluginCollectionOutput>(
+        const result = await this.delete<PluginCollectionOutput>(
             this.formatUrl(`/plugins/${pluginId}`),
             this.systemId,
         );
+        return PluginCollectionOutput.convertTags(result);
     }
 }

@@ -25,3 +25,9 @@ export function camelCaseKey(str: string): string {
         )
         .join("");
 }
+
+export function convertTags(obj: any): void {
+    if (Array.isArray(obj.tags)) {
+        obj.tags = obj.tags.join(", ");
+    }
+}
