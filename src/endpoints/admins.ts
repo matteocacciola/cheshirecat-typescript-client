@@ -247,12 +247,11 @@ export class AdminsEndpoint extends AbstractEndpoint {
      */
     async postInstallPluginFromZip(pathZip: string): Promise<PluginCollectionOutput> {
         const form = new FormData();
-        const finalZipPath = path.basename(pathZip);
 
-        const fileBuffer = await readFile(finalZipPath);
+        const fileBuffer = await readFile(pathZip);
         form.append("file", fileBuffer, {
-            filename: finalZipPath,
-            contentType: mime.contentType(finalZipPath) || "application/octet-stream"
+            filename: path.basename(pathZip),
+            contentType: mime.contentType(pathZip) || "application/octet-stream"
         });
 
         const endpoint = this.formatUrl("/plugins/upload");
