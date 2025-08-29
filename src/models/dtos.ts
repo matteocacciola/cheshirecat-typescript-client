@@ -19,7 +19,6 @@ export class AgentOutput extends BaseDTO {
 }
 
 export class Memory extends BaseDTO {
-    public episodic: Record<string, any>[] = [];
     public declarative: Record<string, any>[] = [];
     public procedural: Record<string, any>[] = [];
 

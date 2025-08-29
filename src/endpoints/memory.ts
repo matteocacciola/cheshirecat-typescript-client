@@ -10,7 +10,8 @@ import {
     MemoryPointOutput,
     MemoryRecallOutput,
 } from "../models/api/memories";
-import {Collection, Role} from "../enums";
+import {Collection} from "../enums";
+import {Role} from "../types";
 import {Why} from "../models/dtos";
 
 export class MemoryEndpoint extends AbstractEndpoint {
@@ -117,7 +118,7 @@ export class MemoryEndpoint extends AbstractEndpoint {
         why?: Why | null,
     ): Promise<ConversationHistoryOutput> {
         const payload = {
-            who: who.toString(),
+            who: who,
             text,
             ...(image && {image}),
             ...(why && {why: why.toArray()}),

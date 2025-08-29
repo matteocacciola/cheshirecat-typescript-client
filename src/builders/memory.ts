@@ -2,17 +2,11 @@ import {Memory, MemoryPoint} from "../types";
 import {BaseBuilder} from "./types";
 
 export class MemoryBuilder implements BaseBuilder {
-    private episodic: Record<string, any>[] = [];
     private declarative: Record<string, any>[] = [];
     private procedural: Record<string, any>[] = [];
 
     public static create(): MemoryBuilder {
         return new MemoryBuilder();
-    }
-
-    public setEpisodic(episodic?: Record<string, any>[] | null): MemoryBuilder {
-        this.episodic = episodic ?? [];
-        return this;
     }
 
     public setDeclarative(declarative?: Record<string, any>[] | null): MemoryBuilder {
@@ -27,7 +21,6 @@ export class MemoryBuilder implements BaseBuilder {
 
     public build(): Memory {
         return {
-            episodic: this.episodic,
             declarative: this.declarative,
             procedural: this.procedural
         };

@@ -1,7 +1,6 @@
 import {AgentOutput} from "./models/dtos";
 
 export interface Memory {
-    episodic: Record<string, any>[];
     declarative: Record<string, any>[];
     procedural: Record<string, any>[];
 }
@@ -24,3 +23,5 @@ export interface Why {
     modelInteractions?: Record<string, any>[];
     agentOutput?: AgentOutput;
 }
+
+export type Role = "user" | "assistant";
