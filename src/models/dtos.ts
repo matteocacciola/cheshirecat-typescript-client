@@ -1,23 +1,6 @@
 import {BaseDTO} from "./base";
 import {SerializedName} from "../decorators";
 
-export class AgentOutput extends BaseDTO {
-    public output?: string | null = null;
-
-    @SerializedName("intermediate_steps")
-    public intermediateSteps: Record<string, any>[] = [];
-
-    @SerializedName("return_direct")
-    public returnDirect: boolean = false;
-
-    @SerializedName("with_llm_error")
-    public withLlmError: boolean = false;
-
-    public toArray(): Record<string, any> {
-        return this.toJSON();
-    }
-}
-
 export class Memory extends BaseDTO {
     public declarative: Record<string, any>[] = [];
     public procedural: Record<string, any>[] = [];
@@ -107,15 +90,11 @@ export class Why extends BaseDTO {
 
     public memory: Memory;
 
-    @SerializedName("model_interactions")
-    public modelInteractions: Record<string, any>[] = [];
-
     public toArray(): Record<string, any> {
         return {
             input: this.input,
             intermediate_steps: this.intermediateSteps,
             memory: this.memory.toArray(),
-            model_interactions: this.modelInteractions,
         };
     }
 }
