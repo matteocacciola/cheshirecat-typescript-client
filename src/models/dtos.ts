@@ -50,8 +50,7 @@ export class Message extends MessageBase {
     constructor(
         text: string,
         image?: string,
-        public metadata?: Record<string, any>,
-        public stream: boolean = false,
+        public metadata?: Record<string, any>
     ) {
         super();
         this.text = text;
@@ -61,7 +60,6 @@ export class Message extends MessageBase {
     public toArray(): Record<string, any> {
         const result = super.toArray();
 
-        result["stream"] = this.stream;
         if (this.metadata) {
             result["metadata"] = this.metadata;
         }
