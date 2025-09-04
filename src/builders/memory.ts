@@ -3,7 +3,6 @@ import {BaseBuilder} from "./types";
 
 export class MemoryBuilder implements BaseBuilder {
     private declarative: Record<string, any>[] = [];
-    private procedural: Record<string, any>[] = [];
 
     public static create(): MemoryBuilder {
         return new MemoryBuilder();
@@ -14,15 +13,9 @@ export class MemoryBuilder implements BaseBuilder {
         return this;
     }
 
-    public setProcedural(procedural?: Record<string, any>[] | null): MemoryBuilder {
-        this.procedural = procedural ?? [];
-        return this;
-    }
-
     public build(): Memory {
         return {
             declarative: this.declarative,
-            procedural: this.procedural
         };
     }
 }

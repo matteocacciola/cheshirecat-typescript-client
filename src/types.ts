@@ -1,6 +1,5 @@
 export interface Memory {
     declarative: Record<string, any>[];
-    procedural: Record<string, any>[];
 }
 
 export interface MemoryPoint {

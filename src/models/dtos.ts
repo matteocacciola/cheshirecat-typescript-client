@@ -3,7 +3,6 @@ import {SerializedName} from "../decorators";
 
 export class Memory extends BaseDTO {
     public declarative: Record<string, any>[] = [];
-    public procedural: Record<string, any>[] = [];
 
     public toArray(): Record<string, any> {
         return this.toJSON();
