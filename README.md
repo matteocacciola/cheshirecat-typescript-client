@@ -68,5 +68,5 @@ cheshireCatClient.memory().getMemoryCollections("agent"); // get number of vecto
 cheshireCatClient.memory().getMemoryRecall("HELLO", "agent", "user"); // recall memories by text
 
 //delete memory points by metadata, like this example delete by source
-cheshireCatClient.memory().deleteMemoryPointsByMetadata(Collection.Declarative, "agent", {"source": url});
+cheshireCatClient.memory().deleteMemoryPointsByMetadata("declarative", "agent", {"source": url});
 ```

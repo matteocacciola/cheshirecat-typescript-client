@@ -10,9 +10,9 @@ import {
     MemoryPointOutput,
     MemoryRecallOutput,
 } from "../models/api/memories";
-import {Collection} from "../enums";
 import {Role} from "../types";
 import {Why} from "../models/dtos";
+import {CollectionsItem} from "../models/api/nested/memories";
 
 export class MemoryEndpoint extends AbstractEndpoint {
     protected prefix = "/memory";
@@ -50,11 +50,29 @@ export class MemoryEndpoint extends AbstractEndpoint {
      * @returns The output of the deletion operation.
      */
     async deleteAllSingleMemoryCollectionPoints(
-        collection: Collection,
+        collection: string,
         agentId: string,
     ): Promise<CollectionPointsDestroyOutput> {
         return this.delete<CollectionPointsDestroyOutput>(
-            this.formatUrl("/collections/" + collection.toString()),
+            this.formatUrl("/collections/" + collection),
+            agentId,
+        );
+    }
+
+    /**
+     * This method create a new collection.
+     *
+     * @param collection The collection to create.
+     * @param agentId The agent ID.
+     *
+     * @returns The output of the creation.
+     */
+    async postMemoryCollections(
+        collection: string,
+        agentId: string,
+    ): Promise<CollectionsItem> {
+        return this.post<CollectionsItem>(
+            this.formatUrl("/collections/" + collection),
             agentId,
         );
     }
@@ -170,7 +188,7 @@ export class MemoryEndpoint extends AbstractEndpoint {
      * @returns The memory point output.
      */
     async postMemoryPoint(
-        collection: Collection,
+        collection: string,
         agentId: string,
         userId: string,
         memoryPoint: MemoryPointOutput,
@@ -180,7 +198,7 @@ export class MemoryEndpoint extends AbstractEndpoint {
         }
 
         return this.post<MemoryPointOutput>(
-            this.formatUrl("/collections/" + collection.toString() + "/points"),
+            this.formatUrl("/collections/" + collection + "/points"),
             agentId,
             memoryPoint,
         );
@@ -198,7 +216,7 @@ export class MemoryEndpoint extends AbstractEndpoint {
      * @returns The memory point output.
      */
     async putMemoryPoint(
-        collection: Collection,
+        collection: string,
         agentId: string,
         userId: string,
         memoryPoint: MemoryPointOutput,
@@ -209,7 +227,7 @@ export class MemoryEndpoint extends AbstractEndpoint {
         }
 
         return this.put<MemoryPointOutput>(
-            this.formatUrl("/collections/" + collection.toString() + "/points/" + pointId),
+            this.formatUrl("/collections/" + collection + "/points/" + pointId),
             agentId,
             memoryPoint,
         );
@@ -225,12 +243,12 @@ export class MemoryEndpoint extends AbstractEndpoint {
      * @returns The memory point output.
      */
     async deleteMemoryPoint(
-        collection: Collection,
+        collection: string,
         pointId: string,
         agentId: string,
     ): Promise<MemoryPointDeleteOutput> {
         return this.delete<MemoryPointDeleteOutput>(
-            this.formatUrl("/collections/" + collection.toString() + "/points/" + pointId),
+            this.formatUrl("/collections/" + collection + "/points/" + pointId),
             agentId,
         );
     }
@@ -246,12 +264,12 @@ export class MemoryEndpoint extends AbstractEndpoint {
      * @returns The output of the deletion operation.
      */
     async deleteMemoryPointsByMetadata(
-        collection: Collection,
+        collection: string,
         agentId: string,
         metadata?: any,
     ): Promise<MemoryPointsDeleteByMetadataOutput> {
         return this.delete<MemoryPointsDeleteByMetadataOutput>(
-            this.formatUrl("/collections/" + collection.toString() + "/points"),
+            this.formatUrl("/collections/" + collection + "/points"),
             agentId,
             null,
             metadata
@@ -271,7 +289,7 @@ export class MemoryEndpoint extends AbstractEndpoint {
      * @returns The memory points output.
      */
     async getMemoryPoints(
-        collection: Collection,
+        collection: string,
         agentId: string,
         limit?: number | null,
         offset?: number | null,
@@ -284,7 +302,7 @@ export class MemoryEndpoint extends AbstractEndpoint {
         };
 
         return this.get<MemoryPointsOutput>(
-            this.formatUrl("/collections/" + collection.toString() + "/points"),
+            this.formatUrl("/collections/" + collection + "/points"),
             agentId,
             null,
             query,
