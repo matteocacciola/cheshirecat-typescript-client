@@ -19,6 +19,7 @@ import {RabbitHoleEndpoint} from "./endpoints/rabbitHole";
 import {MemoryEndpoint} from "./endpoints/memory";
 import {SocketError, SocketResponse} from "./models/socket";
 import {VectorDatabaseEndpoint} from "./endpoints/vectorDatabase";
+import {HealthCheckEndpoint} from "./endpoints/healthCheck";
 
 export class CheshireCatClient implements Endpoints {
     private readonly wsClient: WSClient;
@@ -111,6 +112,10 @@ export class CheshireCatClient implements Endpoints {
 
     public vectorDatabase(): VectorDatabaseEndpoint {
         return new VectorDatabaseEndpoint(this);
+    }
+
+    public healthCheck(): HealthCheckEndpoint {
+        return new HealthCheckEndpoint(this);
     }
 
     /**
