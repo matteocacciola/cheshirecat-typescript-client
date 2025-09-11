@@ -355,7 +355,7 @@ export class AdminsEndpoint extends AbstractEndpoint {
      */
     async putTogglePlugin(pluginId: string): Promise<PluginToggleOutput> {
         return this.put<PluginToggleOutput>(
-            this.formatUrl(`/toggle/${pluginId}`),
+            this.formatUrl(`/plugins/toggle/${pluginId}`),
             this.systemId,
         );
     }
