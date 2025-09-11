@@ -5,7 +5,7 @@ import * as mime from "mime-types";
 import {AbstractEndpoint} from "./abstract";
 import {TokenOutput} from "../models/api/tokens";
 import {AdminOutput, ResetOutput} from "../models/api/admins";
-import {PluginCollectionOutput} from "../models/api/plugins";
+import {PluginCollectionOutput, PluginToggleOutput} from "../models/api/plugins";
 import {Permission} from "../models/dtos";
 
 export class AdminsEndpoint extends AbstractEndpoint {
@@ -344,5 +344,19 @@ export class AdminsEndpoint extends AbstractEndpoint {
             this.systemId,
         );
         return PluginCollectionOutput.convertTags(result);
+    }
+
+    /**
+     * This endpoint toggles a plugin.
+     *
+     * @param pluginId - The ID of the plugin to toggle.
+     *
+     * @returns The plugin toggle output.
+     */
+    async putTogglePlugin(pluginId: string): Promise<PluginToggleOutput> {
+        return this.put<PluginToggleOutput>(
+            this.formatUrl(`/toggle/${pluginId}`),
+            this.systemId,
+        );
     }
 }
