@@ -13,7 +13,6 @@ import {LargeLanguageModelEndpoint} from "./endpoints/largeLanguageModel";
 import {MessageEndpoint} from "./endpoints/message";
 import {PluginsEndpoint} from "./endpoints/plugins";
 import {FileManagerEndpoint} from "./endpoints/fileManager";
-import {SettingsEndpoint} from "./endpoints/settings";
 import {UsersEndpoint} from "./endpoints/users";
 import {RabbitHoleEndpoint} from "./endpoints/rabbitHole";
 import {MemoryEndpoint} from "./endpoints/memory";
@@ -96,10 +95,6 @@ export class CheshireCatClient implements Endpoints {
 
     public rabbitHole(): RabbitHoleEndpoint {
         return new RabbitHoleEndpoint(this);
-    }
-
-    public settings(): SettingsEndpoint {
-        return new SettingsEndpoint(this);
     }
 
     public users(): UsersEndpoint {

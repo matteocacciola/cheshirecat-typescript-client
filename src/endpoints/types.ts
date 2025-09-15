@@ -7,7 +7,6 @@ import {MessageEndpoint} from "./message";
 import {PluginsEndpoint} from "./plugins";
 import {FileManagerEndpoint} from "./fileManager";
 import {RabbitHoleEndpoint} from "./rabbitHole";
-import {SettingsEndpoint} from "./settings";
 import {UsersEndpoint} from "./users";
 import {VectorDatabaseEndpoint} from "./vectorDatabase";
 import {CustomEndpoint} from "./customEndpoint";
@@ -22,7 +21,6 @@ export interface Endpoints {
     message: () => MessageEndpoint;
     plugins: () => PluginsEndpoint;
     rabbitHole: () => RabbitHoleEndpoint;
-    settings: () => SettingsEndpoint;
     users: () => UsersEndpoint;
     vectorDatabase: () => VectorDatabaseEndpoint;
     custom: () => CustomEndpoint;
