@@ -11,50 +11,6 @@ export class FilterOutput {
     }
 }
 
-export class HookOutput {
-    name: string;
-    priority: number;
-
-    public toArray(): object {
-        return {
-            name: this.name,
-            priority: this.priority,
-        };
-    }
-}
-
-export class ToolOutput {
-    name: string;
-
-    public toArray(): object {
-        return {
-            name: this.name,
-        };
-    }
-}
-
-export class FormOutput {
-    name: string;
-
-    public toArray(): object {
-        return {
-            name: this.name,
-        };
-    }
-}
-
-export class EndpointOutput {
-    name: string;
-    tags: string[];
-
-    public toArray(): object {
-        return {
-            name: this.name,
-            tags: this.tags,
-        };
-    }
-}
-
 export class PluginCollectionOutput {
     filters: FilterOutput = new FilterOutput();
     installed: PluginItemOutput[] = [];
@@ -95,11 +51,7 @@ export class PluginItemOutput {
     tags?: string | null = null;
     thumb?: string | null = null;
     version?: string | null = null;
-    active: boolean;
-    hooks: HookOutput[];
-    tools: ToolOutput[];
-    forms: FormOutput[];
-    endpoints: EndpointOutput[];
+    localInfo: object | null = null;
 
     public toArray(): object {
         return {
@@ -112,11 +64,7 @@ export class PluginItemOutput {
             tags: this.tags,
             thumb: this.thumb,
             version: this.version,
-            active: this.active,
-            hooks: this.hooks.map(item => item.toArray()),
-            tools: this.tools.map(item => item.toArray()),
-            forms: this.forms.map(item => item.toArray()),
-            endpoints: this.endpoints.map(item => item.toArray()),
+            localInfo: this.localInfo,
         };
     }
 }
