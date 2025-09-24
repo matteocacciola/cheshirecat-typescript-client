@@ -7,6 +7,7 @@ import {Endpoints} from "./endpoints/types";
 import {AdminsEndpoint} from "./endpoints/admins";
 import {AuthHandlerEndpoint} from "./endpoints/authHandler";
 import {ChunkerEndpoint} from "./endpoints/chunker";
+import {ConversationEndpoint} from "./endpoints/conversation";
 import {CustomEndpoint} from "./endpoints/customEndpoint";
 import {EmbedderEndpoint} from "./endpoints/embedder";
 import {LargeLanguageModelEndpoint} from "./endpoints/largeLanguageModel";
@@ -67,6 +68,10 @@ export class CheshireCatClient implements Endpoints {
 
     public chunker(): ChunkerEndpoint {
         return new ChunkerEndpoint(this);
+    }
+
+    public conversation(): ConversationEndpoint {
+        return new ConversationEndpoint(this);
     }
 
     public embedder(): EmbedderEndpoint {

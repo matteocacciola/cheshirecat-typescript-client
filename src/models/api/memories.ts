@@ -1,7 +1,6 @@
 import {MemoryPoint} from "../../types";
 import {
     CollectionsItem,
-    ConversationHistoryItem,
     MemoryPointsDeleteByMetadataInfo,
     MemoryRecallQuery,
     MemoryRecallVectors,
@@ -14,19 +13,6 @@ export interface CollectionPointsDestroyOutput {
 
 export interface CollectionsOutput {
     collections: CollectionsItem[];
-}
-
-export interface ConversationHistoryDeleteOutput {
-    deleted: boolean;
-}
-
-export class ConversationHistoryOutput {
-    history: ConversationHistoryItem[];
-
-    public toArray(): Record<string, unknown> {
-        const history = this.history.map(h => h.toArray());
-        return { history };
-    }
 }
 
 export interface MemoryPointDeleteOutput {

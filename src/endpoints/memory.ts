@@ -2,16 +2,12 @@ import {AbstractEndpoint} from "./abstract";
 import {
     CollectionPointsDestroyOutput,
     CollectionsOutput,
-    ConversationHistoryDeleteOutput,
-    ConversationHistoryOutput,
     MemoryPointDeleteOutput,
     MemoryPointsDeleteByMetadataOutput,
     MemoryPointsOutput,
     MemoryPointOutput,
     MemoryRecallOutput,
 } from "../models/api/memories";
-import {Role} from "../types";
-import {Why} from "../models/dtos";
 import {CollectionsItem} from "../models/api/nested/memories";
 
 export class MemoryEndpoint extends AbstractEndpoint {
@@ -78,74 +74,6 @@ export class MemoryEndpoint extends AbstractEndpoint {
     }
 
     // END Memory Collections API --
-
-    // -- Memory Conversation History API
-
-    /**
-     * This endpoint returns the conversation history.
-     *
-     * @param agentId The agent ID.
-     * @param userId The user ID to filter the conversation history by.
-     *
-     * @returns The conversation history.
-     */
-    async getConversationHistory(
-        agentId: string,
-        userId: string,
-    ): Promise<ConversationHistoryOutput> {
-        return this.get<ConversationHistoryOutput>(this.formatUrl("/conversation_history"), agentId, userId);
-    }
-
-    /**
-     * This endpoint deletes the conversation history.
-     *
-     * @param agentId The agent ID.
-     * @param userId The user ID to filter the conversation history by.
-     *
-     * @returns The output of the deletion operation.
-     */
-    async deleteConversationHistory(
-        agentId: string,
-        userId: string,
-    ): Promise<ConversationHistoryDeleteOutput> {
-        return this.delete<ConversationHistoryDeleteOutput>(
-            this.formatUrl("/conversation_history"),
-            agentId,
-            userId,
-        );
-    }
-
-    /**
-     * This endpoint creates a new element in the conversation history.
-     *
-     * @param who The speaker of the conversation history.
-     * @param text The text of the conversation history.
-     * @param agentId The agent ID.
-     * @param userId The user ID to add the conversation history to.
-     * @param image The image of the conversation history.
-     * @param why The reason for the conversation history.
-     *
-     * @returns The conversation history.
-     */
-    async postConversationHistory(
-        who: Role,
-        text: string,
-        agentId: string,
-        userId: string,
-        image?: string | null,
-        why?: Why | null,
-    ): Promise<ConversationHistoryOutput> {
-        const payload = {
-            who: who,
-            text,
-            ...(image && {image}),
-            ...(why && {why: why.toArray()}),
-        };
-
-        return this.post<ConversationHistoryOutput>(this.formatUrl("/conversation_history"), agentId, payload, userId);
-    }
-
-    // END Memory Conversation History API --
 
     // -- Memory Points API
 
