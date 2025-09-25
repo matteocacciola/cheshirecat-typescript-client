@@ -89,6 +89,7 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
      *                  - In Node.js: A string path to the file
      *                  - In browser: A File object
      * @param agentId ID of the agent to associate with this upload
+     * @param chatId Optional ID of the chat to associate with this upload
      * @param fileName Optional custom name for the file. If not provided:
      *                - In Node.js: The basename of the file path is used
      *                - In browser: The name property of the File object is used
@@ -113,17 +114,20 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
     async postFile(
         fileSource: FileSource,
         agentId: string,
+        chatId?: string | null,
         fileName?: string | null,
         metadata?: Record<string, any> | null,
     ): Promise<any> {
         const form = createFormData();
+
+        const endpoint = chatId ? this.formatUrl(`/${chatId}`) : this.prefix;
 
         try {
             await this.appendFileToForm(form, fileSource, "file", fileName);
             this.appendQueryDataToForm(form, metadata);
 
             // Send the request
-            return await this.submitForm(form, this.prefix, agentId);
+            return await this.submitForm(form, endpoint, agentId);
         } catch (error) {
             this.throwError(fileSource, error)
         }
@@ -146,6 +150,7 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
      *                  - In Node.js: An array of strings path to the file
      *                  - In browser: An array of File objects
      * @param agentId ID of the agent to associate with this upload
+     * @param chatId Optional ID of the chat to associate with this upload
      * @param metadata Optional additional metadata to associate with the file
      *
      * @returns Promise resolving to the API response data
@@ -167,9 +172,12 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
     async postFiles(
         fileSources: FileSource[],
         agentId: string,
+        chatId?: string | null,
         metadata?: Record<string, any> | null,
     ): Promise<any> {
         const form = new FormData();
+
+        const endpoint = chatId ? this.formatUrl(`/batch/${chatId}`) : this.formatUrl("/batch");
 
         try {
             await Promise.all(fileSources.map(async (fileSource) => {
@@ -179,7 +187,7 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
             // Append additional query parameters
             this.appendQueryDataToForm(form, metadata);
 
-            return await this.submitForm(form, this.formatUrl("/batch"), agentId);
+            return await this.submitForm(form, endpoint, agentId);
         } catch (error) {
             this.throwError(fileSources[0], error)
         }
