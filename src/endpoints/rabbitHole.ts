@@ -202,6 +202,7 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
      *
      * @param webUrl The URL of the web page to be ingested.
      * @param agentId The ID of the agent to be used for the upload.
+     * @param chatId Optional ID of the chat to associate with this upload.
      * @param metadata Additional metadata to be associated with the web URL.
      *
      * @returns The response from the RabbitHole API.
@@ -209,6 +210,7 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
     async postWeb(
         webUrl: string,
         agentId: string,
+        chatId?: string | null,
         metadata?: Record<string, any> | null,
     ): Promise<any> {
         const payload: Record<string, any> = { url: webUrl };
@@ -216,7 +218,7 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
             payload["metadata"] = metadata;
         }
 
-        const endpoint = this.formatUrl("/web");
+        const endpoint = chatId ? this.formatUrl(`/web/${chatId}`) : this.formatUrl("/web");
 
         const response = await this.getHttpClient(agentId).post(endpoint, payload);
         if (response.status !== 200) {
