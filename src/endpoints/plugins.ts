@@ -85,4 +85,20 @@ export class PluginsEndpoint extends AbstractEndpoint {
         );
         return PluginSettingsOutput.convertScheme(result);
     }
+
+    /**
+     * This endpoint resets the plugin settings.
+     *
+     * @param pluginId - The ID of the plugin to update the settings for.
+     * @param agentId - The ID of the agent to update the plugin settings for.
+     *
+     * @returns The plugin settings.
+     */
+    async postResetPluginSettings(pluginId: string, agentId: string): Promise<PluginSettingsOutput> {
+        const result = await this.post<PluginSettingsOutput>(
+            this.formatUrl(`/settings/${pluginId}`),
+            agentId,
+        );
+        return PluginSettingsOutput.convertScheme(result);
+    }
 }
