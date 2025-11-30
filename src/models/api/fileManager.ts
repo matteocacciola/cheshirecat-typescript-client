@@ -9,3 +9,7 @@ export interface FileManagerAttributes {
     files: FileResponse[];
     size: number;
 }
+
+export interface FileManagerDeletedFiles {
+    deleted: boolean;
+}

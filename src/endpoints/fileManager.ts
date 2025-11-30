@@ -1,6 +1,6 @@
 import {AbstractEndpoint} from "./abstract";
 import {FactoryObjectSettingsOutput} from "../models/api/factories";
-import {FileManagerAttributes} from "../models/api/fileManager";
+import {FileManagerAttributes, FileManagerDeletedFiles} from "../models/api/fileManager";
 
 export class FileManagerEndpoint extends AbstractEndpoint {
     protected prefix = '/file_manager';
@@ -66,16 +66,30 @@ export class FileManagerEndpoint extends AbstractEndpoint {
         );
     }
 
-    async getFile(agentId: string, filePath: string): Promise<ReadableStream> {
-        const endpoint = this.formatUrl(`/download/${filePath}`);
+    async getFile(agentId: string, fileName: string): Promise<ReadableStream> {
+        const endpoint = this.formatUrl(`/files/${fileName}`);
 
         const response = await this.getHttpClient(agentId).get(
             endpoint,
-            { responseType: 'stream' }
+            { responseType: "stream" }
         );
         if (response.status !== 200) {
             throw new Error(`Failed to fetch data from ${endpoint}: ${response.statusText}`);
         }
         return response.data;
+    }
+
+    async deleteFile(agentId: string, fileName: string): Promise<FileManagerDeletedFiles> {
+        return this.delete<FileManagerDeletedFiles>(
+            this.formatUrl(`/files/${fileName}`),
+            agentId,
+        );
+    }
+
+    async deleteFiles(agentId: string): Promise<FileManagerDeletedFiles> {
+        return this.delete<FileManagerDeletedFiles>(
+            this.formatUrl("/files"),
+            agentId,
+        );
     }
 }
