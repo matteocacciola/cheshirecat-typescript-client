@@ -4,7 +4,7 @@ import path from "path";
 import * as mime from "mime-types";
 import {AbstractEndpoint} from "./abstract";
 import {TokenOutput} from "../models/api/tokens";
-import {AdminOutput, ResetOutput} from "../models/api/admins";
+import {AdminOutput} from "../models/api/admins";
 import {PluginCollectionOutput, PluginToggleOutput} from "../models/api/plugins";
 import {Permission} from "../models/dtos";
 
@@ -152,72 +152,6 @@ export class AdminsEndpoint extends AbstractEndpoint {
      */
     async deleteAdmin(adminId: string): Promise<AdminOutput> {
         return this.delete<AdminOutput>(this.formatUrl(`/users/${adminId}`), this.systemId);
-    }
-
-    /**
-     * This endpoint is used to reset the system to factory settings. This will delete all data in the system.
-     *
-     * @returns The output of the reset operation.
-     */
-    async postFactoryReset(): Promise<ResetOutput> {
-        return this.post<ResetOutput>(
-            this.formatUrl("/utils/factory/reset/"),
-            this.systemId,
-        );
-    }
-
-    /**
-     * This endpoint is used to retrieve all the agents in the system.
-     *
-     * @returns A list of agent IDs.
-     */
-    async getAgents(): Promise<string[]> {
-        return this.get<string[]>(
-            this.formatUrl("/utils/agents/"),
-            this.systemId,
-        );
-    }
-
-    /**
-     * This endpoint is used to create a new agent from scratch.
-     *
-     * @param agentId The ID of the agent to create.
-     *
-     * @returns The output of the create operation.
-     */
-    async postAgentCreate(agentId: string): Promise<ResetOutput> {
-        return this.post<ResetOutput>(
-            this.formatUrl("/utils/agent/create/"),
-            agentId,
-        );
-    }
-
-    /**
-     * This endpoint is used to reset the agent to factory settings. This will delete all data in the agent.
-     *
-     * @param agentId The ID of the agent to reset.
-     *
-     * @returns The output of the reset operation.
-     */
-    async postAgentReset(agentId: string): Promise<ResetOutput> {
-        return this.post<ResetOutput>(
-            this.formatUrl("/utils/agent/reset/"),
-            agentId
-        );
-    }
-
-    /**
-     * This endpoint is used to reset the agent to factory settings. This will delete all data in the agent.
-     *
-     * @param agentId The ID of the agent to reset.
-     *
-     * @returns The output of the reset operation.
-     */
-    async postAgentDestroy(agentId: string): Promise<ResetOutput> {
-        return this.post<ResetOutput>(
-            this.formatUrl("/utils/agent/destroy/"),
-            agentId
-        );
     }
 
     /**

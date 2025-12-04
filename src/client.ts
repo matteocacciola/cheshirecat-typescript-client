@@ -15,6 +15,7 @@ import {MessageEndpoint} from "./endpoints/message";
 import {PluginsEndpoint} from "./endpoints/plugins";
 import {FileManagerEndpoint} from "./endpoints/fileManager";
 import {UsersEndpoint} from "./endpoints/users";
+import {UtilsEndpoint} from "./endpoints/utils";
 import {RabbitHoleEndpoint} from "./endpoints/rabbitHole";
 import {MemoryEndpoint} from "./endpoints/memory";
 import {SocketError, SocketResponse} from "./models/socket";
@@ -104,6 +105,10 @@ export class CheshireCatClient implements Endpoints {
 
     public users(): UsersEndpoint {
         return new UsersEndpoint(this);
+    }
+
+    public utils(): UtilsEndpoint {
+        return new UtilsEndpoint(this);
     }
 
     public custom(): CustomEndpoint {

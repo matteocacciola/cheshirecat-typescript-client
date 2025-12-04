@@ -33,3 +33,7 @@ export interface ResetOutput {
     deletedMemories: boolean;
     deletedPluginFolders: boolean;
 }
+
+export interface ClonedOutput {
+    cloned: boolean;
+}
