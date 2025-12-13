@@ -25,7 +25,7 @@ export class ConversationHistoryItemContent extends MessageBase {
     }
 }
 
-export class ConversationHistoryItem {
+export class ConversationMessage {
     who: string;
     when: number;
     content: ConversationHistoryItemContent;
