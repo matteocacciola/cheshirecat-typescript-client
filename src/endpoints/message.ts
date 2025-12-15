@@ -10,15 +10,22 @@ export class MessageEndpoint extends AbstractEndpoint {
      * @param message The message to send
      * @param agentId The ID of the agent to send the message to
      * @param userId The ID of the user sending the message
+     * @param chatId The ID of the chat session (optional)
      *
      * @returns The response from the server
      */
-    async sendHttpMessage(message: Message, agentId: string, userId: string): Promise<MessageOutput> {
+    async sendHttpMessage(
+        message: Message,
+        agentId: string,
+        userId: string,
+        chatId?: string | null,
+    ): Promise<MessageOutput> {
         return this.post<MessageOutput>(
             "/message",
             agentId,
             message.toJSON(),
             userId,
+            chatId,
         );
     }
 
@@ -28,6 +35,7 @@ export class MessageEndpoint extends AbstractEndpoint {
      * @param message The message to send
      * @param agentId The ID of the agent to send the message to
      * @param userId The ID of the user sending the message
+     * @param chatId The ID of the chat session (optional)
      * @param closure A closure that is called when a non-chat message is received
      *
      * @returns The response from the server
@@ -36,6 +44,7 @@ export class MessageEndpoint extends AbstractEndpoint {
         message: Message,
         agentId: string,
         userId: string,
+        chatId?: string | null,
         closure?: (content: string) => void | null
     ): Promise<MessageOutput> {
         const json = JSON.stringify(message.toJSON());
@@ -43,7 +52,7 @@ export class MessageEndpoint extends AbstractEndpoint {
             throw new Error("Error encoding message");
         }
 
-        const client = this.getWsClient(agentId, userId);
+        const client = this.getWsClient(agentId, userId, chatId);
 
         return new Promise((resolve, reject) => {
             client.on("open", () => {

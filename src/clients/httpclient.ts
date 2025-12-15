@@ -6,8 +6,9 @@ export class HttpClient {
     protected httpUri: Uri;
     protected apikey?: string | null;
     protected token?: string | null;
-    protected userId?: string | null = null;
     protected agentId?: string | null = null;
+    protected userId?: string | null = null;
+    protected chatId?: string | null = null;
     protected middlewares: Record<string, (config: InternalAxiosRequestConfig) => InternalAxiosRequestConfig>;
 
     constructor(
@@ -52,13 +53,14 @@ export class HttpClient {
         return this;
     }
 
-    public getClient(agentId?: string | null, userId?: string | null): AxiosInstance {
+    public getClient(agentId?: string | null, userId?: string | null, chatId?: string | null): AxiosInstance {
         if (!this.apikey && !this.token) {
             throw new Error("You must provide an apikey or a token");
         }
 
         this.agentId = agentId;
         this.userId = userId;
+        this.chatId = chatId;
 
         return this.httpClient;
     }
@@ -75,11 +77,14 @@ export class HttpClient {
         if (this.apikey) {
             config.headers.set("Authorization", `Bearer ${this.apikey}`);
         }
+        if (this.agentId) {
+            config.headers.set("agent_id", this.agentId);
+        }
         if (this.userId) {
             config.headers.set("user_id", this.userId);
         }
-        if (this.agentId) {
-            config.headers.set("agent_id", this.agentId);
+        if (this.chatId) {
+            config.headers.set("chat_id", this.chatId);
         }
 
         return config;
@@ -95,6 +100,9 @@ export class HttpClient {
         }
         if (this.agentId) {
             config.headers.set("agent_id", this.agentId);
+        }
+        if (this.chatId) {
+            config.headers.set("chat_id", this.chatId);
         }
 
         return config;

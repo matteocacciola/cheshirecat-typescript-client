@@ -29,38 +29,45 @@ export class WSClient {
         return this;
     }
 
-    public getClient(agentId: string, userId: string): WebSocketClient {
+    public getClient(agentId: string, userId: string, chatId?: string | null): WebSocketClient {
         if (!this.apikey && !this.token) {
             throw new Error("You must provide an apikey or a token");
         }
 
         if (!this.wsClient) {
-            this.wsClient = this.createWsClient(agentId, userId);
+            this.wsClient = this.createWsClient(agentId, userId, chatId);
         }
 
         return this.wsClient;
     }
 
-    public getWsUri(agentId: string, userId: string): Uri {
+    public getWsUri(agentId: string, userId: string, chatId?: string | null): Uri {
         const query: Record<string, string> = {};
         query["user_id"] = userId;
 
-        if (this.token) {
-            query["token"] = this.token;
-        } else {
-            query["apikey"] = this.apikey!;
+        let path = `ws/${agentId}`;
+        if (chatId) {
+            path += `/${chatId}`;
         }
 
         return new Uri()
             .withScheme(this.isWSS ? "wss" : "ws")
             .withHost(this.host)
-            .withPath(`ws/${agentId}`)
+            .withPath(path)
             .withQueryItems(query)
             .withPort(this.port);
     }
 
-    protected createWsClient(agentId: string, userId: string): WebSocketClient {
-        return new WebSocketClient(this.getWsUri(agentId, userId).toString());
+    protected createWsClient(agentId: string, userId: string, chatId?: string | null): WebSocketClient {
+        const bearerToken = this.token ?? this.apikey!;
+        const headers = {
+            Authorization: `Bearer ${bearerToken}`
+        };
+
+        return new WebSocketClient(
+            this.getWsUri(agentId, userId, chatId).toString(),
+            headers,
+        );
     }
 }
 
@@ -74,6 +81,8 @@ interface WebSocketClientEvents {
 
 export class WebSocketClient extends EventEmitter {
     private ws: WebSocket;
+    private url: string;
+    private headers?: Record<string, string>;
     private pingInterval?: ReturnType<typeof setInterval>;
     private pongTimeout?: ReturnType<typeof setTimeout>;
     private reconnectAttempts: number = 0;
@@ -81,9 +90,11 @@ export class WebSocketClient extends EventEmitter {
     private readonly pingIntervalMs: number = 30000;
     private readonly pongTimeoutMs: number = 5000;
 
-    constructor(url: string) {
+    constructor(url: string, headers?: Record<string, string>) {
         super();
-        this.ws = this.connect(url);
+        this.url = url;
+        this.headers = headers;
+        this.ws = this.connect(url, headers);
         this.setupPingPong();
         this.setupEventHandlers();
     }
@@ -102,7 +113,12 @@ export class WebSocketClient extends EventEmitter {
         return super.emit(event, ...args);
     }
 
-    private connect(url: string): WebSocket {
+    private connect(url: string, headers?: Record<string, string>): WebSocket {
+        if (headers) {
+            return new WebSocket(url, {
+                headers: headers
+            });
+        }
         return new WebSocket(url);
     }
 
@@ -133,7 +149,7 @@ export class WebSocketClient extends EventEmitter {
         if (this.reconnectAttempts < this.maxReconnectAttempts) {
             this.reconnectAttempts++;
             setTimeout(() => {
-                this.ws = this.connect(this.ws.url);
+                this.ws = this.connect(this.url, this.headers);
                 this.setupEventHandlers();
             }, 1000 * this.reconnectAttempts);
         }
@@ -209,7 +225,7 @@ export class WebSocketClient extends EventEmitter {
         if (this.reconnectAttempts < this.maxReconnectAttempts) {
             this.reconnectAttempts++;
             setTimeout(() => {
-                this.ws = this.connect(this.ws.url);
+                this.ws = this.connect(this.url, this.headers);
                 this.setupEventHandlers();
             }, 1000 * this.reconnectAttempts);
         }

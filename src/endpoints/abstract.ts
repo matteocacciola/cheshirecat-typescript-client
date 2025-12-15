@@ -15,12 +15,12 @@ export abstract class AbstractEndpoint {
         return `/${this.prefix}/${endpoint}`.replace(/\/+/g, "/");
     }
 
-    protected getHttpClient(agentId?: string | null, userId?: string | null): AxiosInstance {
-        return this.client.getHttpClient().getClient(agentId, userId);
+    protected getHttpClient(agentId?: string | null, userId?: string | null, chatId?: string | null): AxiosInstance {
+        return this.client.getHttpClient().getClient(agentId, userId, chatId);
     }
 
-    protected getWsClient(agentId: string, userId: string): WebSocketClient {
-        return this.client.getWsClient().getClient(agentId, userId);
+    protected getWsClient(agentId: string, userId: string, chatId?: string | null): WebSocketClient {
+        return this.client.getWsClient().getClient(agentId, userId, chatId);
     }
 
     protected deserialize<T>(data: string): T {
@@ -44,14 +44,15 @@ export abstract class AbstractEndpoint {
         endpoint: string,
         agentId: string,
         payload?: any,
-        userId?: string | null
+        userId?: string | null,
+        chatId?: string | null,
     ): Promise<T> {
         const options: any = {};
         if (payload) {
             options.json = payload;
         }
 
-        const response = await this.getHttpClient(agentId, userId).post(endpoint, options);
+        const response = await this.getHttpClient(agentId, userId, chatId).post(endpoint, options);
         if (response.status !== 200) {
             throw new Error(`Failed to post data to ${endpoint}: ${response.statusText}`);
         }
