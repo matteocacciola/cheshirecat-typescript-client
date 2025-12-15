@@ -21,3 +21,11 @@ export class MessageOutput extends MessageBase {
         };
     }
 }
+
+
+export interface ChatOutput {
+    agent_id: string;
+    user_id: string;
+    chat_id: string;
+    message: MessageOutput;
+}

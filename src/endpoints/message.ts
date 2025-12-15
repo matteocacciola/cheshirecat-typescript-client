@@ -1,5 +1,5 @@
 import {AbstractEndpoint} from "./abstract";
-import {MessageOutput} from "../models/api/messages";
+import {ChatOutput} from "../models/api/messages";
 import {Message} from "../models/dtos";
 import {SocketRequest} from "../models/socket";
 
@@ -19,8 +19,8 @@ export class MessageEndpoint extends AbstractEndpoint {
         agentId: string,
         userId: string,
         chatId?: string | null,
-    ): Promise<MessageOutput> {
-        return this.post<MessageOutput>(
+    ): Promise<ChatOutput> {
+        return this.post<ChatOutput>(
             "/message",
             agentId,
             message.toJSON(),
@@ -46,7 +46,7 @@ export class MessageEndpoint extends AbstractEndpoint {
         userId: string,
         chatId?: string | null,
         closure?: (content: string) => void | null
-    ): Promise<MessageOutput> {
+    ): Promise<ChatOutput> {
         const json = JSON.stringify(message.toJSON());
         if (!json) {
             throw new Error("Error encoding message");
@@ -70,7 +70,7 @@ export class MessageEndpoint extends AbstractEndpoint {
 
                 client.close();
                 try {
-                    const messageOutput = this.deserialize<MessageOutput>(content);
+                    const messageOutput = this.deserialize<ChatOutput>(content);
                     resolve(messageOutput);
                 } catch (error) {
                     reject(new Error("Error deserializing message: " + error));
