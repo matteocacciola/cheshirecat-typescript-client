@@ -78,13 +78,13 @@ export class HttpClient {
             config.headers.set("Authorization", `Bearer ${this.apikey}`);
         }
         if (this.agentId) {
-            config.headers.set("agent_id", this.agentId);
+            config.headers.set("X-Agent-ID", this.agentId);
         }
         if (this.userId) {
-            config.headers.set("user_id", this.userId);
+            config.headers.set("X-User-ID", this.userId);
         }
         if (this.chatId) {
-            config.headers.set("chat_id", this.chatId);
+            config.headers.set("X-Chat-ID", this.chatId);
         }
 
         return config;
@@ -99,10 +99,10 @@ export class HttpClient {
             config.headers.set("Authorization", `Bearer ${this.token}`);
         }
         if (this.agentId) {
-            config.headers.set("agent_id", this.agentId);
+            config.headers.set("X-Agent-ID", this.agentId);
         }
         if (this.chatId) {
-            config.headers.set("chat_id", this.chatId);
+            config.headers.set("X-Chat-ID", this.chatId);
         }
 
         return config;

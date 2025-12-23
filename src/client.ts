@@ -5,6 +5,7 @@ import {HttpClient} from "./clients/httpclient";
 import {camelToSnakeCase} from "./helpers";
 import {Endpoints} from "./endpoints/types";
 import {AdminsEndpoint} from "./endpoints/admins";
+import {AuthEndpoint} from "./endpoints/auth";
 import {AuthHandlerEndpoint} from "./endpoints/authHandler";
 import {ChunkerEndpoint} from "./endpoints/chunker";
 import {ConversationEndpoint} from "./endpoints/conversation";
@@ -61,6 +62,10 @@ export class CheshireCatClient implements Endpoints {
 
     public admins(): AdminsEndpoint {
         return new AdminsEndpoint(this);
+    }
+
+    public auth(): AuthEndpoint {
+        return new AuthEndpoint(this);
     }
 
     public authHandler(): AuthHandlerEndpoint {
