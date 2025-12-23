@@ -36,10 +36,16 @@ export class UtilsEndpoint extends AbstractEndpoint {
      * @returns The output of the create operation.
      */
     async postAgentCreate(agentId: string): Promise<CreatedOutput> {
-        return this.post<CreatedOutput>(
-            this.formatUrl("/agents/create/"),
-            agentId,
-        );
+        const endpoint = this.formatUrl("/agents/create/");
+        const payload = {
+            "agent_id": agentId,
+        };
+        const response = await this.getHttpClient().post(endpoint, { json: payload });
+        if (response.status !== 200) {
+            throw new Error(`Failed to post data to ${endpoint}: ${response.statusText}`);
+        }
+
+        return this.deserialize<CreatedOutput>(response.data);
     }
 
     /**
