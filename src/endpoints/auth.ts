@@ -1,5 +1,5 @@
 import {AbstractEndpoint} from "./abstract";
-import {TokenOutput} from "../models/api/tokens";
+import {AgentMatch, MeOutput, TokenOutput, User} from "../models/api/tokens";
 import {Permission} from "../models/dtos";
 
 export class AuthEndpoint extends AbstractEndpoint {
@@ -11,13 +11,10 @@ export class AuthEndpoint extends AbstractEndpoint {
      *
      * @param username The username of the user.
      * @param password The password of the user.
-     * @param agentId The ID of the agent.
      *
      * @returns The token for the user.
      */
-    async token(username: string, password: string, agentId?: string | null): Promise<TokenOutput> {
-        const headers = agentId ? { "X-Agent-ID": agentId } : undefined;
-
+    async token(username: string, password: string): Promise<TokenOutput> {
         const response = await this.client.getHttpClient().createHttpClient().post(
             this.formatUrl("/token"),
             {
@@ -26,7 +23,6 @@ export class AuthEndpoint extends AbstractEndpoint {
                     password,
                 },
             },
-            { headers }
         );
 
         const result = this.deserialize<TokenOutput>(response.data);
@@ -50,5 +46,21 @@ export class AuthEndpoint extends AbstractEndpoint {
         }
 
         return this.deserialize<Permission>(response.data);
+    }
+
+    async me(token: string): Promise<MeOutput> {
+        this.client.addToken(token);
+        const response = await this.getHttpClient().get("/me");
+        if (response.status !== 200) {
+            throw new Error(`Failed to fetch data from /me: ${response.statusText}`);
+        }
+
+        const agents = response.data.agents || [];
+        response.data.agents = agents.map((agent: any) => {
+            agent.user = this.deserialize<User>(agent.user);
+            return this.deserialize<AgentMatch>(agent);
+        });
+
+        return this.deserialize<MeOutput>(response.data);
     }
 }
