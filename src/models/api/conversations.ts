@@ -17,6 +17,8 @@ export class ConversationsResponse {
     chat_id: string;
     name: string;
     num_messages: number;
+    created_at: number | null;
+    updated_at: number | null;
 }
 
 export class ConversationNameChangeOutput {

@@ -5,8 +5,6 @@ import {
     ConversationNameChangeOutput,
     ConversationsResponse,
 } from "../models/api/conversations";
-import {Role} from "../types";
-import {Why} from "../models/dtos";
 
 export class ConversationEndpoint extends AbstractEndpoint {
     protected prefix = "/conversation";
@@ -42,13 +40,10 @@ export class ConversationEndpoint extends AbstractEndpoint {
             throw new Error(`Failed to fetch data from ${this.prefix}: ${response.statusText}`);
         }
 
-        return response.data.map((item: any) => {
-            const conversation = new ConversationsResponse();
-            conversation.chat_id = item.chat_id;
-            conversation.name = item.name;
-            conversation.num_messages = item.num_messages;
-            return conversation;
-        });
+        const conversations = response.data;
+        return conversations.map((conversation: any) => this.deserialize<ConversationsResponse>(
+            JSON.stringify(conversation)
+        ));
     }
 
     /**
