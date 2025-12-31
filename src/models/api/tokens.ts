@@ -12,12 +12,11 @@ export class User {
     id: string;
     username: string;
     permissions: Record<string, string[]>;
+    created_at: number | null;
+    updated_at: number | null;
 }
 
 export class AgentMatch {
-    @SerializedName("agent_id")
-    agentId: string;
-
     @SerializedName("agent_name")
     agentName: string;
 
