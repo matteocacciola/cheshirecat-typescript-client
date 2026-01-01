@@ -3,115 +3,10 @@ import FormData from "form-data";
 import path from "path";
 import * as mime from "mime-types";
 import {AbstractEndpoint} from "./abstract";
-import {AdminOutput} from "../models/api/admins";
 import {PluginCollectionOutput, PluginToggleOutput} from "../models/api/plugins";
 
 export class AdminsEndpoint extends AbstractEndpoint {
-    protected prefix = "/admins";
-
-    /**
-     * This endpoint is used to create a new admin user in the system.
-     *
-     * @param username The username of the new admin user.
-     * @param password The password of the new admin user.
-     * @param permissions The permissions of the new admin user.
-     *
-     * @returns The new admin user.
-     */
-    async postAdmin(
-        username: string,
-        password: string,
-        permissions?: Record<string, string[]> | null,
-    ): Promise<AdminOutput> {
-        const payload: Record<string, any> = { username, password };
-        if (permissions) {
-            payload.permissions = permissions;
-        }
-
-        return this.post<AdminOutput>(
-            this.formatUrl("/users"),
-            this.systemId,
-            payload,
-        );
-    }
-
-    /**
-     * This endpoint is used to get a list of admin users in the system.
-     *
-     * @param limit The maximum number of admin users to return.
-     * @param skip The number of admin users to skip.
-     *
-     * @returns A list of admin users.
-     */
-    async getAdmins(limit?: number | null, skip?: number | null): Promise<AdminOutput[]> {
-        const query: Record<string, any> = {};
-        if (limit) query.limit = limit;
-        if (skip) query.skip = skip;
-
-        const endpoint = this.formatUrl("/users");
-
-        const response = await this.getHttpClient(this.systemId).get(
-            endpoint,
-            query ? { params: query } : undefined
-        );
-        if (response.status !== 200) {
-            throw new Error(`Failed to fetch data from ${endpoint}: ${response.statusText}`);
-        }
-
-        return response.data.map((item: any) =>
-            this.deserialize<AdminOutput>(JSON.stringify(item))
-        );
-    }
-
-    /**
-     * This endpoint is used to get a specific admin user in the system.
-     *
-     * @param adminId The ID of the admin user.
-     *
-     * @returns The admin user.
-     */
-    async getAdmin(adminId: string): Promise<AdminOutput> {
-        return this.get<AdminOutput>(this.formatUrl(`/users/${adminId}`), this.systemId);
-    }
-
-    /**
-     * This endpoint is used to update an admin user in the system.
-     *
-     * @param adminId The ID of the admin user.
-     * @param username The new username of the admin user.
-     * @param password The new password of the admin user.
-     * @param permissions The new permissions of the admin user.
-     *
-     * @returns The updated admin user.
-     */
-    async putAdmin(
-        adminId: string,
-        username?: string | null,
-        password?: string | null,
-        permissions?: Record<string, string[]> | null
-    ): Promise<AdminOutput> {
-        const payload: Record<string, any> = {};
-        if (username) payload.username = username;
-        if (password) payload.password = password;
-        if (permissions) payload.permissions = permissions;
-
-        return this.put<AdminOutput>(
-            this.formatUrl(`/users/${adminId}`),
-            this.systemId,
-            payload,
-        );
-    }
-
-    /**
-     * This endpoint is used to delete an admin user in the system.
-     *
-     * @param adminId The ID of the admin user.
-     *
-     * @returns The deleted admin user.
-     */
-    async deleteAdmin(adminId: string): Promise<AdminOutput> {
-        return this.delete<AdminOutput>(this.formatUrl(`/users/${adminId}`), this.systemId);
-    }
+    protected prefix = "/plugins";
 
     /**
      * This endpoint returns the available plugins, at a system level.
@@ -122,7 +17,7 @@ export class AdminsEndpoint extends AbstractEndpoint {
      */
     async getAvailablePlugins(pluginName?: string | null): Promise<PluginCollectionOutput> {
         const result = await this.get<PluginCollectionOutput>(
-            this.formatUrl("/plugins"),
+            this.formatUrl("/installed"),
             this.systemId,
             undefined,
             pluginName ? { query: pluginName } : undefined
@@ -149,7 +44,7 @@ export class AdminsEndpoint extends AbstractEndpoint {
             contentType: mime.contentType(pathZip) || "application/octet-stream"
         });
 
-        const endpoint = this.formatUrl("/plugins/upload");
+        const endpoint = this.formatUrl("/install/upload");
 
         const response = await this.getHttpClient(this.systemId).post(endpoint, form, {
             headers: {
@@ -174,7 +69,7 @@ export class AdminsEndpoint extends AbstractEndpoint {
      */
     async postInstallPluginFromRegistry(url: string): Promise<PluginCollectionOutput> {
         const result = await this.post<PluginCollectionOutput>(
-            this.formatUrl("/plugins/upload/registry"),
+            this.formatUrl("/install/registry"),
             this.systemId,
             { url },
         );
@@ -188,7 +83,7 @@ export class AdminsEndpoint extends AbstractEndpoint {
      */
     async getPluginsSettings(): Promise<PluginCollectionOutput> {
         const result = await this.get<PluginCollectionOutput>(
-            this.formatUrl("/plugins/settings"),
+            this.formatUrl("/system/settings"),
             this.systemId,
         );
         return PluginCollectionOutput.convertTags(result);
@@ -203,7 +98,7 @@ export class AdminsEndpoint extends AbstractEndpoint {
      */
     async getPluginSettings(pluginId: string): Promise<PluginCollectionOutput> {
         const result = await this.get<PluginCollectionOutput>(
-            this.formatUrl(`/plugins/settings/${pluginId}`),
+            this.formatUrl(`/system/settings/${pluginId}`),
             this.systemId,
         );
         return PluginCollectionOutput.convertTags(result);
@@ -218,7 +113,7 @@ export class AdminsEndpoint extends AbstractEndpoint {
      */
     async getPluginDetails(pluginId: string): Promise<PluginCollectionOutput> {
         const result = await this.get<PluginCollectionOutput>(
-            this.formatUrl(`/plugins/${pluginId}`),
+            this.formatUrl(`/system/details/${pluginId}`),
             this.systemId,
         );
         return PluginCollectionOutput.convertTags(result);
@@ -233,7 +128,7 @@ export class AdminsEndpoint extends AbstractEndpoint {
      */
     async deletePlugin(pluginId: string): Promise<PluginCollectionOutput> {
         const result = await this.delete<PluginCollectionOutput>(
-            this.formatUrl(`/plugins/${pluginId}`),
+            this.formatUrl(`/uninstall/${pluginId}`),
             this.systemId,
         );
         return PluginCollectionOutput.convertTags(result);
@@ -248,7 +143,7 @@ export class AdminsEndpoint extends AbstractEndpoint {
      */
     async putTogglePlugin(pluginId: string): Promise<PluginToggleOutput> {
         return this.put<PluginToggleOutput>(
-            this.formatUrl(`/plugins/toggle/${pluginId}`),
+            this.formatUrl(`/system/toggle/${pluginId}`),
             this.systemId,
         );
     }

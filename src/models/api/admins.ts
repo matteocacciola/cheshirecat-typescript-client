@@ -1,11 +1,5 @@
 import {PluginToggleOutput} from "./plugins";
 
-export interface AdminOutput {
-    username: string;
-    permissions: Record<string, string[]>;
-    id: string;
-}
-
 export interface CreatedOutput {
     created: boolean;
 }
