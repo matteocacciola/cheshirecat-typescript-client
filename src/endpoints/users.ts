@@ -13,6 +13,7 @@ export class UsersEndpoint extends AbstractEndpoint {
      * @param username The username of the user.
      * @param password The password of the user.
      * @param permissions The permissions of the user.
+     * @param metadata The metadata of the user.
      *
      * @returns The created user.
      */
@@ -21,15 +22,14 @@ export class UsersEndpoint extends AbstractEndpoint {
         username: string,
         password: string,
         permissions?: Record<string, string[]> | null,
+        metadata?: Record<string, any> | null,
     ): Promise<UserOutput> {
         const payload = {
             username,
             password,
-            permissions: permissions
+            ...permissions && {permissions: permissions},
+            ...metadata && {metadata: metadata},
         };
-        if (permissions) {
-            payload.permissions = permissions;
-        }
 
         return this.post<UserOutput>(this.prefix, agentId, payload);
     }
@@ -80,6 +80,7 @@ export class UsersEndpoint extends AbstractEndpoint {
      * @param username The username of the user.
      * @param password The password of the user.
      * @param permissions The permissions of the user.
+     * @param metadata The metadata of the user.
      *
      * @returns The updated user.
      */
@@ -89,17 +90,14 @@ export class UsersEndpoint extends AbstractEndpoint {
         username?: string | null,
         password?: string | null,
         permissions?: Record<string, string[]> | null,
+        metadata?: Record<string, any> | null,
     ): Promise<UserOutput> {
-        const payload: any = {};
-        if (username) {
-            payload.username = username;
-        }
-        if (password) {
-            payload.password = password;
-        }
-        if (permissions) {
-            payload.permissions = permissions;
-        }
+        const payload: any = {
+            ...username && {username: username},
+            ...password && {password: password},
+            ...permissions && {permissions: permissions},
+            ...metadata && {metadata: metadata},
+        };
 
         return this.put<UserOutput>(this.formatUrl(userId), agentId, payload);
     }
