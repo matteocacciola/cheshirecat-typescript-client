@@ -22,6 +22,7 @@ import {MemoryEndpoint} from "./endpoints/memory";
 import {SocketError, SocketResponse} from "./models/socket";
 import {VectorDatabaseEndpoint} from "./endpoints/vectorDatabase";
 import {HealthCheckEndpoint} from "./endpoints/healthCheck";
+import {AgenticWorkflowEndpoint} from "./endpoints/agenticWorkflow";
 
 export class CheshireCatClient implements Endpoints {
     private readonly wsClient: WSClient;
@@ -62,6 +63,10 @@ export class CheshireCatClient implements Endpoints {
 
     public admins(): AdminsEndpoint {
         return new AdminsEndpoint(this);
+    }
+
+    public agenticWorkflow(): AgenticWorkflowEndpoint {
+        return new AgenticWorkflowEndpoint(this);
     }
 
     public auth(): AuthEndpoint {
