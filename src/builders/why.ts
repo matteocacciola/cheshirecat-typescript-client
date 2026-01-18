@@ -1,10 +1,10 @@
 import {BaseBuilder} from "./types";
-import {Memory, Why} from "../types";
+import {Why} from "../types";
 
 export class WhyBuilder implements BaseBuilder {
     private input?: string;
     private intermediateSteps?: Record<string, any>[] = [];
-    private memory!: Memory;
+    private memory?: Record<string, any>[] = [];
 
     public static create(): WhyBuilder {
         return new WhyBuilder();
@@ -20,7 +20,7 @@ export class WhyBuilder implements BaseBuilder {
         return this;
     }
 
-    public setMemory(memory: Memory): WhyBuilder {
+    public setMemory(memory?: Record<string, any>[]): WhyBuilder {
         this.memory = memory;
         return this;
     }

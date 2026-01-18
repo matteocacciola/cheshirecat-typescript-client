@@ -1,7 +1,3 @@
-export interface Memory {
-    declarative: Record<string, any>[];
-}
-
 export interface MemoryPoint {
     content: string;
     metadata: Record<string, any>;
@@ -16,7 +12,7 @@ export interface SettingInput {
 export interface Why {
     input?: string | null;
     intermediateSteps?: Record<string, any>[];
-    memory: Memory;
+    memory?: Record<string, any>[];
 }
 
 export type Role = "user" | "assistant";

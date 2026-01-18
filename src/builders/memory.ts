@@ -1,24 +1,5 @@
-import {Memory, MemoryPoint} from "../types";
+import {MemoryPoint} from "../types";
 import {BaseBuilder} from "./types";
-
-export class MemoryBuilder implements BaseBuilder {
-    private declarative: Record<string, any>[] = [];
-
-    public static create(): MemoryBuilder {
-        return new MemoryBuilder();
-    }
-
-    public setDeclarative(declarative?: Record<string, any>[] | null): MemoryBuilder {
-        this.declarative = declarative ?? [];
-        return this;
-    }
-
-    public build(): Memory {
-        return {
-            declarative: this.declarative,
-        };
-    }
-}
 
 export class MemoryPointBuilder implements BaseBuilder {
     private content!: string;
