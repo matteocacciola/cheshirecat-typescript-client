@@ -59,17 +59,20 @@ export class FileManagerEndpoint extends AbstractEndpoint {
         return FactoryObjectSettingsOutput.convertSchemes(result);
     }
 
-    async getFileManagerAttributes(agentId: string): Promise<FileManagerAttributes> {
+    async getFileManagerAttributes(agentId: string, chatId?: string | null): Promise<FileManagerAttributes> {
         return this.get<FileManagerAttributes>(
             this.formatUrl("/"),
             agentId,
+            null,
+            null,
+            chatId,
         );
     }
 
-    async getFile(agentId: string, fileName: string): Promise<ReadableStream> {
+    async getFile(agentId: string, fileName: string, chatId?: string | null): Promise<ReadableStream> {
         const endpoint = this.formatUrl(`/files/${fileName}`);
 
-        const response = await this.getHttpClient(agentId).get(
+        const response = await this.getHttpClient(agentId, null, chatId).get(
             endpoint,
             { responseType: "stream" }
         );
@@ -79,17 +82,23 @@ export class FileManagerEndpoint extends AbstractEndpoint {
         return response.data;
     }
 
-    async deleteFile(agentId: string, fileName: string): Promise<FileManagerDeletedFiles> {
+    async deleteFile(agentId: string, fileName: string, chatId?: string | null): Promise<FileManagerDeletedFiles> {
         return this.delete<FileManagerDeletedFiles>(
             this.formatUrl(`/files/${fileName}`),
             agentId,
+            null,
+            null,
+            chatId,
         );
     }
 
-    async deleteFiles(agentId: string): Promise<FileManagerDeletedFiles> {
+    async deleteFiles(agentId: string, chatId?: string | null): Promise<FileManagerDeletedFiles> {
         return this.delete<FileManagerDeletedFiles>(
             this.formatUrl("/files"),
             agentId,
+            null,
+            null,
+            chatId,
         );
     }
 }

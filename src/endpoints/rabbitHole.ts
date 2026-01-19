@@ -285,13 +285,14 @@ export class RabbitHoleEndpoint extends AbstractEndpoint {
 
     /**
      * This method retrieves the web sources for the RabbitHole API. The web sources are the web URLs that are allowed
-     *      * to be uploaded to the RabbitHole API. The web sources are returned in a list.
+     * to be uploaded to the RabbitHole API. The web sources are returned in a list.
      *
      * @param agentId The ID of the agent to be used.
+     * @param chatId Optional ID of the chat to filter the web sources.
      *
      * @returns The URLs of the web sources for the RabbitHole API.
      */
-    async getWebSources(agentId: string): Promise<string[]> {
-        return this.get<string[]>(this.formatUrl("/web"), agentId);
+    async getWebSources(agentId: string, chatId?: string | null): Promise<string[]> {
+        return this.get<string[]>(this.formatUrl("/web"), agentId, null, null, chatId);
     }
 }

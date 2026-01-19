@@ -27,13 +27,19 @@ export abstract class AbstractEndpoint {
         return this.client.getSerializer().deserialize<T>(data);
     }
 
-    protected async get<T>(endpoint: string, agentId: string | null, userId?: string | null, query?: any): Promise<T> {
+    protected async get<T>(
+        endpoint: string,
+        agentId: string | null,
+        userId?: string | null,
+        query?: any,
+        chatId?: string | null,
+    ): Promise<T> {
         const options: any = {};
         if (query) {
             options.query = query;
         }
 
-        const response = await this.getHttpClient(agentId, userId).get(endpoint, options);
+        const response = await this.getHttpClient(agentId, userId, chatId).get(endpoint, options);
         if (response.status !== 200) {
             throw new Error(`Failed to fetch data from ${endpoint}: ${response.statusText}`);
         }
@@ -63,14 +69,15 @@ export abstract class AbstractEndpoint {
         endpoint: string,
         agentId: string,
         payload?: any,
-        userId?: string | null
+        userId?: string | null,
+        chatId?: string | null,
     ): Promise<T> {
         const options: any = {};
         if (payload) {
             options.json = payload;
         }
 
-        const response = await this.getHttpClient(agentId, userId).put(endpoint, options);
+        const response = await this.getHttpClient(agentId, userId, chatId).put(endpoint, options);
         if (response.status !== 200) {
             throw new Error(`Failed to put data to ${endpoint}: ${response.statusText}`);
         }
@@ -81,14 +88,15 @@ export abstract class AbstractEndpoint {
         endpoint: string,
         agentId: string,
         userId?: string | null,
-        payload?: any
+        payload?: any,
+        chatId?: string | null,
     ): Promise<T> {
         const options: any = {};
         if (payload) {
             options.json = payload;
         }
 
-        const response = await this.getHttpClient(agentId, userId).delete(endpoint, options);
+        const response = await this.getHttpClient(agentId, userId, chatId).delete(endpoint, options);
         if (response.status !== 200) {
             throw new Error(`Failed to delete data from ${endpoint}: ${response.statusText}`);
         }

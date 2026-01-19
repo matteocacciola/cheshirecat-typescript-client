@@ -86,6 +86,7 @@ export class MemoryEndpoint extends AbstractEndpoint {
      * @param userId The user ID to filter the memory points by.
      * @param k The number of memory points to retrieve.
      * @param metadata The metadata to filter the memory points by.
+     * @param chatId The chat ID to filter the memory points by.
      *
      * @returns The memory recall output.
      */
@@ -95,6 +96,7 @@ export class MemoryEndpoint extends AbstractEndpoint {
         userId: string,
         k?: number | null,
         metadata?: any,
+        chatId?: string | null,
     ): Promise<MemoryRecallOutput> {
         const query = {
             text,
@@ -102,7 +104,7 @@ export class MemoryEndpoint extends AbstractEndpoint {
             ...(metadata && {metadata: JSON.stringify(metadata)}),
         };
 
-        return this.get<MemoryRecallOutput>(this.formatUrl("/recall"), agentId, userId, query);
+        return this.get<MemoryRecallOutput>(this.formatUrl("/recall"), agentId, userId, query, chatId);
     }
 
     /**
