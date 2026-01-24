@@ -30,7 +30,7 @@ export interface MemoryPointsDeleteByMetadataOutput {
 
 export interface MemoryPointsOutput
 {
-    points: VectorRecord;
+    points: VectorRecord[];
     nextOffset?: string | number | null;
 }
 

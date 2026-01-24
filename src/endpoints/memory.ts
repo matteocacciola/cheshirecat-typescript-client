@@ -9,6 +9,7 @@ import {
     MemoryRecallOutput,
 } from "../models/api/memories";
 import {CollectionsItem} from "../models/api/nested/memories";
+import {FilterSource} from "../models/dtos";
 
 export class MemoryEndpoint extends AbstractEndpoint {
     protected prefix = "/memory";
@@ -239,5 +240,20 @@ export class MemoryEndpoint extends AbstractEndpoint {
         );
     }
 
-    // END Memory Points API --
+    async hasSource(agentId: string, filterSource: FilterSource, chatId?: string | null): Promise<boolean> {
+        const metadata: Record<string, string> = filterSource.source
+            ? {"source": filterSource.source}
+            : {"hash": filterSource.hash!};
+
+        if (chatId) {
+            metadata["chat_id"] = chatId;
+        }
+
+        const collectionName = chatId === null || chatId === undefined ? "declarative" : "episodic";
+        const points = await this.getMemoryPoints(
+            collectionName, agentId, undefined, undefined, metadata
+        );
+
+        return points.points.length > 0;
+    }
 }

@@ -102,3 +102,20 @@ export class Permission {
     id: string;
     name: any;
 }
+
+export class FilterSource {
+    source?: string | null;
+    hash?: string | null;
+
+    constructor(data: { source?: string | null; hash?: string | null }) {
+        this.source = data.source;
+        this.hash = data.hash;
+        this.validate();
+    }
+
+    private validate(): void {
+        if (!this.source && !this.hash) {
+            throw new Error("Either source or hash must be provided");
+        }
+    }
+}
