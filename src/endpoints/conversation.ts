@@ -2,12 +2,12 @@ import {AbstractEndpoint} from "./abstract";
 import {
     ConversationDeleteOutput,
     ConversationHistoryOutput,
-    ConversationNameChangeOutput,
+    ConversationAttributesChangeOutput,
     ConversationsResponse,
 } from "../models/api/conversations";
 
 export class ConversationEndpoint extends AbstractEndpoint {
-    protected prefix = "/conversation";
+    protected prefix = "/conversations";
 
     /**
      * This endpoint returns the conversation history.
@@ -23,7 +23,7 @@ export class ConversationEndpoint extends AbstractEndpoint {
         userId: string,
         chatId: string,
     ): Promise<ConversationHistoryOutput> {
-        return this.get<ConversationHistoryOutput>(this.formatUrl(chatId), agentId, userId);
+        return this.get<ConversationHistoryOutput>(this.formatUrl(`/${chatId}/history`), agentId, userId);
     }
 
     /**
@@ -44,6 +44,19 @@ export class ConversationEndpoint extends AbstractEndpoint {
         return conversations.map((conversation: any) => this.deserialize<ConversationsResponse>(
             JSON.stringify(conversation)
         ));
+    }
+
+    /**
+     * This endpoint returns the attributes of a given conversation, for a given agent and user.
+     *
+     * @param agentId The agent ID.
+     * @param userId The user ID to filter the conversation attributes by.
+     * @param chatId The chat ID to filter the conversation attributes by.
+     *
+     * @returns The conversation attributes.
+     */
+    async getConversation(agentId: string, userId: string, chatId: string): Promise<ConversationsResponse> {
+        return this.get<ConversationsResponse>(this.formatUrl(chatId), agentId, userId);
     }
 
     /**
@@ -70,21 +83,30 @@ export class ConversationEndpoint extends AbstractEndpoint {
     /**
      * This endpoint changes the name of the conversation.
      *
-     * @param name The new name of the conversation.
      * @param agentId The agent ID.
      * @param userId The user ID to add the conversation history to.
      * @param chatId The chat ID to add the conversation history to.
+     * @param name The new name of the conversation.
+     * @param metadata The metadata to associate to the conversation.
      *
      * @returns The output of the change operation.
      */
-    async postConversationName(
-        name: string,
+    async putConversationAttributes(
         agentId: string,
         userId: string,
         chatId: string,
-    ): Promise<ConversationNameChangeOutput> {
-        const payload = {name};
+        name?: string | null,
+        metadata?: Record<string, any>
+    ): Promise<ConversationAttributesChangeOutput> {
+        if (!name && !metadata) {
+            throw new Error("Either name or metadata must be provided");
+        }
 
-        return this.post<ConversationNameChangeOutput>(this.formatUrl(chatId), agentId, payload, userId);
+        const payload: any = {
+            ...name && {name: name},
+            ...metadata && {metadata: metadata},
+        };
+
+        return this.put<ConversationAttributesChangeOutput>(this.formatUrl(chatId), agentId, payload, userId);
     }
 }
