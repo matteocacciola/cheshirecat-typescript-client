@@ -1,5 +1,11 @@
 import {AbstractEndpoint} from "./abstract";
-import {ClonedOutput, CreatedOutput, ResetOutput} from "../models/api/admins";
+import {
+    AgentClonedOutput,
+    AgentCreatedOutput,
+    AgentOutput,
+    AgentUpdatedOutput,
+    ResetOutput
+} from "../models/api/admins";
 
 export class UtilsEndpoint extends AbstractEndpoint {
     protected prefix = "/utils";
@@ -19,33 +25,35 @@ export class UtilsEndpoint extends AbstractEndpoint {
     /**
      * This endpoint is used to retrieve all the agents in the system.
      *
-     * @returns A list of agent IDs.
+     * @returns A list of elements each one having the agent ID as its metadata.
      */
-    async getAgents(): Promise<string[]> {
-        return this.get<string[]>(
-            this.formatUrl("/agents/"),
-            this.systemId,
-        );
+    async getAgents(): Promise<AgentOutput[]> {
+        const endpoint = this.formatUrl("/agents/");
+        const response = await this.getHttpClient(this.systemId).get(endpoint);
+        if (response.status !== 200) {
+            throw new Error(`Failed to fetch data from ${endpoint}: ${response.statusText}`);
+        }
+
+        const agents = response.data;
+        return agents.map((agent: any) => this.deserialize<AgentOutput>(JSON.stringify(agent)));
     }
 
     /**
      * This endpoint is used to create a new agent from scratch.
      *
      * @param agentId The ID of the agent to create.
+     * @param metadata Optional metadata to associate with the agent.
      *
      * @returns The output of the create operation.
      */
-    async postAgentCreate(agentId: string): Promise<CreatedOutput> {
+    async postAgentCreate(agentId: string, metadata?: Record<string, any>): Promise<AgentCreatedOutput> {
         const endpoint = this.formatUrl("/agents/create/");
         const payload = {
             "agent_id": agentId,
+            ...(metadata ? {"metadata": metadata} : {})
         };
-        const response = await this.getHttpClient().post(endpoint, { json: payload });
-        if (response.status !== 200) {
-            throw new Error(`Failed to post data to ${endpoint}: ${response.statusText}`);
-        }
 
-        return this.deserialize<CreatedOutput>(response.data);
+        return this.post<AgentCreatedOutput>(endpoint, this.systemId, payload);
     }
 
     /**
@@ -84,11 +92,27 @@ export class UtilsEndpoint extends AbstractEndpoint {
      *
      * @returns The output of the cloning operation.
      */
-    async postAgentClone(agentId: string, newAgentId: string): Promise<ClonedOutput> {
-        return this.post<ClonedOutput>(
+    async postAgentClone(agentId: string, newAgentId: string): Promise<AgentClonedOutput> {
+        return this.post<AgentClonedOutput>(
             this.formatUrl("/agents/clone/"),
             agentId,
             {"agent_id": newAgentId},
+        );
+    }
+
+    /**
+     * Updates an agent by its unique identifier with the provided metadata.
+     *
+     * @param agentId The unique identifier of the agent to be updated.
+     * @param metadata A key-value pair object containing the metadata to be updated for the agent.
+     *
+     * @returns The output of the update operation.
+     */
+    async putAgent(agentId: string, metadata: Record<string, any>): Promise<AgentUpdatedOutput> {
+        return this.put<AgentUpdatedOutput>(
+            this.formatUrl("/agents/"),
+            agentId,
+            {"metadata": metadata},
         );
     }
 }

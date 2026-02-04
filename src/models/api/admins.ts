@@ -1,6 +1,7 @@
 import {PluginToggleOutput} from "./plugins";
+import {SerializedName} from "../../decorators";
 
-export interface CreatedOutput {
+export interface AgentCreatedOutput {
     created: boolean;
 }
 
@@ -28,6 +29,17 @@ export interface ResetOutput {
     deletedPluginFolders: boolean;
 }
 
-export interface ClonedOutput {
+export interface AgentClonedOutput {
     cloned: boolean;
+}
+
+export interface AgentUpdatedOutput {
+    updated: boolean;
+}
+
+export class AgentOutput {
+    @SerializedName("agent_id")
+    agentId: string;
+
+    metadata: Record<string, any>;
 }
